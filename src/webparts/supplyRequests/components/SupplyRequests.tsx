@@ -1,59 +1,68 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
+import * as React from "react";
+import { useState, useEffect } from "react";
 // import styles from './SupplyRequests.module.scss';
-import type { ISupplyRequestsProps } from './ISupplyRequestsProps';
+import type { ISupplyRequestsProps } from "./ISupplyRequestsProps";
 // import { escape } from '@microsoft/sp-lodash-subset';
+
+import {
+  FluentProvider,
+  webLightTheme,
+  Button,
+} from "@fluentui/react-components";
 
 import { SPFx, spfi } from "@pnp/sp";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
 import "@pnp/sp/items";
 
-const SupplyRequests: React.FC<ISupplyRequestsProps> = (props: ISupplyRequestsProps) => {
+const SupplyRequests: React.FC<ISupplyRequestsProps> = (
+  props: ISupplyRequestsProps,
+) => {
   const {
     // description,
     // isDarkTheme,
     // environmentMessage,
     // hasTeamsContext,
     // userDisplayName,
-    context
+    context,
   } = props;
 
   const sp = spfi().using(SPFx(context));
 
-  const [requestsList, setRequestsList] = useState<any[]>([])
+  const [requestsList, setRequestsList] = useState<any[]>([]);
 
   useEffect(() => {
     const getListItems = async () => {
       try {
         const items: any[] = await sp.web.lists.getByTitle("Requests").items();
-        setRequestsList(items)
+        setRequestsList(items);
       } catch (error) {
         console.log(error);
       }
-    }
-    
-    getListItems()
-    .catch(console.error)
-  },[])
+    };
+
+    getListItems().catch(console.error);
+  }, []);
 
   console.log(requestsList);
 
-  
   return (
-    <>
+    <FluentProvider theme={webLightTheme}>
       <div>Hi</div>
 
       {requestsList.length > 0 ? (
-        <div>{requestsList.map((item) => (
-          <p key={item.Title}>{item.Title}</p>
-        ))}</div>) : (
-          <div>no data</div>
-        )
-      }
+        <div>
+          {requestsList.map((item) => (
+            <p key={item.Title}>{item.Title}</p>
+          ))}
+        </div>
+      ) : (
+        <div>no data</div>
+      )}
 
       <div>Bye</div>
-    </>
+      <Button appearance="primary">Hello Fluent UI React</Button>
+    </FluentProvider>
     // <section className={`${styles.supplyRequests} ${hasTeamsContext ? styles.teams : ''}`}>
     //   <div className={styles.welcome}>
     //     <img
