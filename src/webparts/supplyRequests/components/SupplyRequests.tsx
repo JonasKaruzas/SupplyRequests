@@ -38,11 +38,22 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (props: ISupplyRequestsPr
   },[])
 
   console.log(requestsList);
-  
+
   
   return (
-    <div>Hi</div>
+    <>
+      <div>Hi</div>
 
+      {requestsList.length > 0 ? (
+        <div>{requestsList.map((item) => (
+          <p key={item.Title}>{item.Title}</p>
+        ))}</div>) : (
+          <div>no data</div>
+        )
+      }
+
+      <div>Bye</div>
+    </>
     // <section className={`${styles.supplyRequests} ${hasTeamsContext ? styles.teams : ''}`}>
     //   <div className={styles.welcome}>
     //     <img
