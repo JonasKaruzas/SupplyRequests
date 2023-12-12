@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "supply-requests-client-side-solution",
+    "id": "ac5aa850-9c25-4d15-9972-69a89024a370",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.18.2"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "supply-requests description"
+      },
+      "longDescription": {
+        "default": "supply-requests description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "supply-requests Feature",
+        "description": "The feature that activates elements of the supply-requests solution.",
+        "id": "4420349d-0e12-4f49-98fe-e3325bb43f50",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/supply-requests.sppkg"
+  }
+}
