@@ -30,6 +30,9 @@ const ListItem: React.FC<IListItemProps> = (props: IListItemProps) => {
       </div>
       <Button shape="circular" icon={<EditRegular />} />
       <Button shape="circular" icon={<ArrowStepInRightRegular />} />
+      <Button shape="circular" onClick={() => props.onDelete(props.item.Id)}>
+        Delete
+      </Button>
       <CheckmarkRegular />
     </Card>
   );
