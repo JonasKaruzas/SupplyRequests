@@ -28,7 +28,11 @@ const ListItem: React.FC<IListItemProps> = (props: IListItemProps) => {
         <div>ExecutionDate</div>
         <div>{props.item.ExecutionDate}</div>
       </div>
-      <Button shape="circular" icon={<EditRegular />} />
+      <Button
+        shape="circular"
+        onClick={() => props.onSelect(props.item.Id)}
+        icon={<EditRegular />}
+      />
       <Button shape="circular" icon={<ArrowStepInRightRegular />} />
       <Button shape="circular" onClick={() => props.onDelete(props.item.Id)}>
         Delete

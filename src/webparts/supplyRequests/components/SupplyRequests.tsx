@@ -1,8 +1,9 @@
 import * as React from "react";
-import { useState } from "react";
-// import styles from './SupplyRequests.module.scss';
+// import { useState, useEffect, createContext } from "react";
+import { useState, useEffect } from "react";
 import type { ISupplyRequestsProps } from "./ISupplyRequestsProps";
-// import { escape } from '@microsoft/sp-lodash-subset';
+
+import FormPanel from "./FormPanel";
 
 import {
   FluentProvider,
@@ -17,7 +18,7 @@ import "@pnp/sp/lists";
 import "@pnp/sp/items";
 import { IListItem } from "./IListItem";
 import ListItem from "./ListItem";
-import RequestForm from "./RequestForm";
+// import { WebPartContext } from "@microsoft/sp-webpart-base";
 
 const _requestsTable = "Requests";
 
@@ -35,11 +36,15 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
 
   const sp = spfi().using(SPFx(context));
 
-  const [requestsList, setRequestsList] = useState<IListItem[]>([]);
+  // const SpContext = createContext<WebPartContext | null>(context);
 
-  const getListItems = async () => {
+  const [requestsList, setRequestsList] = useState<IListItem[]>([]);
+  const [selectedItem, setSelectedItem] = useState<number | null>();
+  const [formPanelVisible, setFormPanelVisible] = useState<boolean>(false);
+
+  const getListItems = async (): Promise<void> => {
     try {
-      const items: any[] | [] = await sp.web.lists
+      const items: IListItem[] | [] = await sp.web.lists
         .getByTitle(_requestsTable)
         .items();
       setRequestsList(items);
@@ -49,11 +54,9 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   };
 
   const addItem = async (formData: object): Promise<void> => {
-    console.log("adding item");
-    console.log(formData);
-
     await sp.web.lists.getByTitle(_requestsTable).items.add(formData);
     await getListItems();
+    console.log(requestsList);
   };
 
   const deleteItem = async (id: number): Promise<void> => {
@@ -62,18 +65,58 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     await getListItems();
   };
 
-  console.log(requestsList);
+  const selectItem = (id: number): void => {
+    setSelectedItem(id);
+  };
+
+  const hideFormPanel = (): void => {
+    setFormPanelVisible(false);
+    setSelectedItem(null);
+  };
+
+  const showFormPanel = () => {
+    setFormPanelVisible(true);
+  };
+
+  useEffect(() => {
+    const getData = async (): Promise<void> => {
+      try {
+        await getListItems();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getData().catch((error) => console.log(error));
+  }, []);
+
+  useEffect(() => {
+    if (selectedItem) {
+      setFormPanelVisible(true);
+    }
+  }, [selectItem]);
 
   return (
+    // <SpContext.Provider value={props.context}>
     <FluentProvider theme={webLightTheme}>
-      <button onClick={addItem}>ADD</button>
-      <button onClick={getListItems}>Refresh</button>
-      <RequestForm onAddItem={addItem} />
+      <div>{selectedItem}</div>
+      <FormPanel
+        onAddItem={addItem}
+        onDelete={deleteItem}
+        formPanelVisible={formPanelVisible}
+        hideFormPanel={hideFormPanel}
+        showFormPanel={showFormPanel}
+      />
 
       {requestsList.length > 0 ? (
         <div>
           {requestsList.map((item) => (
-            <ListItem key={item.Id} item={item} onDelete={deleteItem} />
+            <ListItem
+              key={item.Id}
+              item={item}
+              onDelete={deleteItem}
+              onSelect={selectItem}
+            />
           ))}
         </div>
       ) : (
@@ -82,6 +125,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
         </Skeleton>
       )}
     </FluentProvider>
+    // </SpContext.Provider>
   );
 };
 

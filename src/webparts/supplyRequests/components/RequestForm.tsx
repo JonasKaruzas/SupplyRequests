@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Label } from "@fluentui/react/lib/Label";
 import { TextField } from "@fluentui/react/lib/TextField";
 import { IRequestForm } from "./IRequestForm";
+import { DefaultButton } from "@fluentui/react/lib/Button";
 
 import { DatePicker } from "@fluentui/react";
 
@@ -34,11 +35,15 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     console.log(formData);
   };
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     await props.onAddItem(formData);
     console.log("form submitted");
   };
+
+  // const onDelete = async (id: number): Promise<void> => {
+  //   await props.onDelete(id);
+  // };
 
   return (
     <>
@@ -65,7 +70,10 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
           onSelectDate={(e) => onDateChange(e)}
         />
 
-        <button type="submit">SUBMIT</button>
+        <DefaultButton primary type="submit">
+          Save
+        </DefaultButton>
+        <DefaultButton type="button">Delete</DefaultButton>
       </form>
     </>
   );
