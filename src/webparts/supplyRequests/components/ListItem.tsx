@@ -3,11 +3,7 @@ import * as React from "react";
 import { Button, Card } from "@fluentui/react-components";
 import { IListItemProps } from "./IListItemProps";
 
-import {
-  EditRegular,
-  ArrowStepInRightRegular,
-  CheckmarkRegular,
-} from "@fluentui/react-icons";
+import { EditRegular } from "@fluentui/react-icons";
 
 const ListItem: React.FC<IListItemProps> = (props: IListItemProps) => {
   return (
@@ -33,11 +29,6 @@ const ListItem: React.FC<IListItemProps> = (props: IListItemProps) => {
         onClick={() => props.onSelect(props.item.Id)}
         icon={<EditRegular />}
       />
-      <Button shape="circular" icon={<ArrowStepInRightRegular />} />
-      <Button shape="circular" onClick={() => props.onDelete(props.item.Id)}>
-        Delete
-      </Button>
-      <CheckmarkRegular />
     </Card>
   );
 };

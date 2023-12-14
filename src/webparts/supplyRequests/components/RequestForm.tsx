@@ -1,5 +1,7 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useContext } from "react";
+
+import { SelectedListItemContext } from "./SupplyRequests";
 
 import { Label } from "@fluentui/react/lib/Label";
 import { TextField } from "@fluentui/react/lib/TextField";
@@ -8,42 +10,64 @@ import { DefaultButton } from "@fluentui/react/lib/Button";
 
 import { DatePicker } from "@fluentui/react";
 
+export interface IFormState {
+  Id: number;
+  Title: string;
+  Description: string;
+  DueDate: Date | undefined;
+}
+
 const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   const defaultFormState = {
+    Id: 0,
     Title: "",
     Description: "",
     // RequestType: "",
     // RequestArea: "",
-    DueDate: "",
+    DueDate: undefined,
     // Tags: "",
   };
 
-  const [formData, setFormData] = useState(defaultFormState);
+  const selectedListItem = useContext(SelectedListItemContext);
+
+  const initialFormDataState = (): IFormState => {
+    if (!selectedListItem) {
+      return defaultFormState;
+    }
+
+    return {
+      Id: selectedListItem.Id,
+      Title: selectedListItem.Title,
+      Description: selectedListItem.Description,
+      DueDate: new Date(selectedListItem.DueDate),
+    };
+  };
+
+  const [formData, setFormData] = useState(initialFormDataState);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    console.log("form changed");
-    console.log(e);
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const onDateChange = (date: Date | null | undefined): void => {
-    console.log("date changed");
-    console.log(date);
-    if (!date) return;
-    setFormData({ ...formData, DueDate: date.toISOString() });
-    console.log(formData);
+  const onDateChange = (date: Date | undefined): void => {
+    if (date === undefined) return;
+    setFormData({ ...formData, DueDate: date });
+    // setFormData({ ...formData, DueDate: date.toISOString() });
   };
 
   const onSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
-    await props.onAddItem(formData);
-    console.log("form submitted");
+    if (selectedListItem) {
+      await props.onUpdateItem({ ...formData });
+    } else {
+      await props.onAddItem(formData);
+    }
   };
 
-  // const onDelete = async (id: number): Promise<void> => {
-  //   await props.onDelete(id);
-  // };
+  const onDelete = async (id: number): Promise<void> => {
+    await props.onDelete(id);
+  };
 
   return (
     <>
@@ -67,13 +91,27 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
         <DatePicker
           placeholder="Select a DueDate"
           label="DueDate"
-          onSelectDate={(e) => onDateChange(e)}
+          value={formData.DueDate}
+          onSelectDate={(e) => {
+            if (e === null) {
+              onDateChange(undefined);
+            } else {
+              onDateChange(e);
+            }
+          }}
         />
 
         <DefaultButton primary type="submit">
-          Save
+          {selectedListItem ? "Update" : "Save"}
         </DefaultButton>
-        <DefaultButton type="button">Delete</DefaultButton>
+        {selectedListItem ? (
+          <DefaultButton
+            type="button"
+            onClick={() => onDelete(selectedListItem.Id)}
+          >
+            Delete
+          </DefaultButton>
+        ) : null}
       </form>
     </>
   );

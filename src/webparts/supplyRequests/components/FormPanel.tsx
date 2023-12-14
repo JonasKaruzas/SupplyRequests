@@ -5,29 +5,34 @@ import { Panel } from "@fluentui/react/lib/Panel";
 // import { useBoolean } from "@fluentui/react-hooks";
 import RequestForm from "./RequestForm";
 import { IFormPanel } from "./IFormPanel";
+// import { SpContext } from "./SupplyRequests";
+
+// import { SelectedListItemContext } from "./SupplyRequests";
 
 const FormPanel: React.FC<IFormPanel> = (props: IFormPanel) => {
-  // const context = useContext(SpContext);
+  // const selectedListItem = useContext(SelectedListItemContext);
 
-  // console.log("context");
-  // console.log(context);
-
-  const closePanel = () => {
+  const closePanel = (): void => {
     props.hideFormPanel();
   };
 
-  const openPanel = () => {
+  const openPanel = (): void => {
     props.showFormPanel();
   };
 
   const onSave = async (formData: React.FormEvent): Promise<void> => {
-    await props.onAddItem(formData);
     await props.hideFormPanel();
+    await props.onAddItem(formData);
+  };
+
+  const onUpdate = async (formData: React.FormEvent): Promise<void> => {
+    await props.hideFormPanel();
+    await props.onUpdateItem(formData);
   };
 
   const onDelete = async (id: number): Promise<void> => {
-    await props.onDelete(id);
     await props.hideFormPanel();
+    await props.onDelete(id);
   };
 
   return (
@@ -39,7 +44,12 @@ const FormPanel: React.FC<IFormPanel> = (props: IFormPanel) => {
         onDismiss={closePanel}
         closeButtonAriaLabel="Close"
       >
-        <RequestForm onAddItem={onSave} onDelete={onDelete} />
+        {/* {selectedListItem ? <div>{selectedListItem.Id}</div> : <div>null</div>} */}
+        <RequestForm
+          onAddItem={onSave}
+          onDelete={onDelete}
+          onUpdateItem={onUpdate}
+        />
       </Panel>
     </div>
   );

@@ -1,6 +1,5 @@
 import * as React from "react";
-// import { useState, useEffect, createContext } from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext } from "react";
 import type { ISupplyRequestsProps } from "./ISupplyRequestsProps";
 
 import FormPanel from "./FormPanel";
@@ -18,28 +17,24 @@ import "@pnp/sp/lists";
 import "@pnp/sp/items";
 import { IListItem } from "./IListItem";
 import ListItem from "./ListItem";
-// import { WebPartContext } from "@microsoft/sp-webpart-base";
+import { WebPartContext } from "@microsoft/sp-webpart-base";
+import { IFormState } from "./RequestForm";
 
 const _requestsTable = "Requests";
+
+export const SpContext = createContext<WebPartContext | null>(null);
+export const SelectedListItemContext = createContext<IListItem | null>(null);
 
 const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   props: ISupplyRequestsProps,
 ) => {
-  const {
-    // description,
-    // isDarkTheme,
-    // environmentMessage,
-    // hasTeamsContext,
-    // userDisplayName,
-    context,
-  } = props;
-
+  const { context } = props;
   const sp = spfi().using(SPFx(context));
 
-  // const SpContext = createContext<WebPartContext | null>(context);
-
   const [requestsList, setRequestsList] = useState<IListItem[]>([]);
-  const [selectedItem, setSelectedItem] = useState<number | null>();
+  const [selectedListItem, setSelectedListItem] = useState<IListItem | null>(
+    null,
+  );
   const [formPanelVisible, setFormPanelVisible] = useState<boolean>(false);
 
   const getListItems = async (): Promise<void> => {
@@ -53,10 +48,9 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     }
   };
 
-  const addItem = async (formData: object): Promise<void> => {
+  const addItem = async (formData: IFormState): Promise<void> => {
     await sp.web.lists.getByTitle(_requestsTable).items.add(formData);
     await getListItems();
-    console.log(requestsList);
   };
 
   const deleteItem = async (id: number): Promise<void> => {
@@ -65,16 +59,38 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     await getListItems();
   };
 
+  const updateItem = async (formData: IFormState): Promise<void> => {
+    await sp.web.lists
+      .getByTitle(_requestsTable)
+      .items.getById(formData.Id)
+      .update(formData);
+    await getListItems();
+  };
+
   const selectItem = (id: number): void => {
-    setSelectedItem(id);
+    const findItem = (id: number): IListItem | null => {
+      let res = null;
+
+      for (let i = 0; i < requestsList.length; i++) {
+        if (requestsList[i].Id === id) {
+          res = { ...requestsList[i] };
+          break;
+        }
+      }
+      return res;
+    };
+
+    const foundItem = findItem(id);
+
+    setSelectedListItem(foundItem);
   };
 
   const hideFormPanel = (): void => {
     setFormPanelVisible(false);
-    setSelectedItem(null);
+    setSelectedListItem(null);
   };
 
-  const showFormPanel = () => {
+  const showFormPanel = (): void => {
     setFormPanelVisible(true);
   };
 
@@ -91,41 +107,38 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   }, []);
 
   useEffect(() => {
-    if (selectedItem) {
+    if (selectedListItem) {
       setFormPanelVisible(true);
     }
   }, [selectItem]);
 
   return (
-    // <SpContext.Provider value={props.context}>
-    <FluentProvider theme={webLightTheme}>
-      <div>{selectedItem}</div>
-      <FormPanel
-        onAddItem={addItem}
-        onDelete={deleteItem}
-        formPanelVisible={formPanelVisible}
-        hideFormPanel={hideFormPanel}
-        showFormPanel={showFormPanel}
-      />
+    <SpContext.Provider value={props.context}>
+      <SelectedListItemContext.Provider value={selectedListItem}>
+        <FluentProvider theme={webLightTheme}>
+          <FormPanel
+            onAddItem={addItem}
+            onDelete={deleteItem}
+            onUpdateItem={updateItem}
+            formPanelVisible={formPanelVisible}
+            hideFormPanel={hideFormPanel}
+            showFormPanel={showFormPanel}
+          />
 
-      {requestsList.length > 0 ? (
-        <div>
-          {requestsList.map((item) => (
-            <ListItem
-              key={item.Id}
-              item={item}
-              onDelete={deleteItem}
-              onSelect={selectItem}
-            />
-          ))}
-        </div>
-      ) : (
-        <Skeleton {...props}>
-          <SkeletonItem />
-        </Skeleton>
-      )}
-    </FluentProvider>
-    // </SpContext.Provider>
+          {requestsList.length > 0 ? (
+            <div>
+              {requestsList.map((item) => (
+                <ListItem key={item.Id} item={item} onSelect={selectItem} />
+              ))}
+            </div>
+          ) : (
+            <Skeleton {...props}>
+              <SkeletonItem />
+            </Skeleton>
+          )}
+        </FluentProvider>
+      </SelectedListItemContext.Provider>
+    </SpContext.Provider>
   );
 };
 
