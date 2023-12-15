@@ -10,12 +10,16 @@ import { DefaultButton } from "@fluentui/react/lib/Button";
 
 import { DatePicker } from "@fluentui/react";
 
+import { SpContext } from "./SupplyRequests";
+// import * as moment from "moment";
+
 export interface IFormState {
   Id: number;
   Title: string;
   Description: string;
   DueDate: Date | undefined;
 }
+console.log("wtf");
 
 const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   const defaultFormState = {
@@ -29,6 +33,8 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   };
 
   const selectedListItem = useContext(SelectedListItemContext);
+  const context = useContext(SpContext);
+  console.log(context);
 
   const initialFormDataState = (): IFormState => {
     if (!selectedListItem) {
@@ -51,6 +57,17 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   };
 
   const onDateChange = (date: Date | undefined): void => {
+    console.log("date");
+    console.log(date);
+    // if (context) {
+    //   const currentCultureName =
+    //     context.pageContext.legacyPageContext.currentCultureName;
+    //   moment.locale(currentCultureName);
+    //   const dateString = moment(new Date()).format("L");
+    //   console.log("dateString");
+    //   console.log(dateString);
+    // }
+
     if (date === undefined) return;
     setFormData({ ...formData, DueDate: date });
     // setFormData({ ...formData, DueDate: date.toISOString() });

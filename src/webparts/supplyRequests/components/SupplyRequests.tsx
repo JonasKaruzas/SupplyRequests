@@ -19,6 +19,8 @@ import { IListItem } from "./IListItem";
 import ListItem from "./ListItem";
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { IFormState } from "./RequestForm";
+import { DetailsListDocumentsExample } from "./DetailsListDocumentsExample";
+import RequestList from "./RequestList";
 
 const _requestsTable = "Requests";
 
@@ -125,6 +127,9 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
             showFormPanel={showFormPanel}
           />
 
+          <RequestList />
+
+          <DetailsListDocumentsExample />
           {requestsList.length > 0 ? (
             <div>
               {requestsList.map((item) => (

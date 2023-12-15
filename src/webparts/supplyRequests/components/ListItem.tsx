@@ -9,19 +9,33 @@ const ListItem: React.FC<IListItemProps> = (props: IListItemProps) => {
   return (
     <Card orientation="horizontal">
       <div>
-        <div>Author</div>
+        <div>
+          <strong>Author</strong>
+        </div>
         <div>{props.item.AuthorId}</div>
       </div>
       <div>
-        <div>Title</div>
+        <div>
+          <strong>Title</strong>
+        </div>
         <div>{props.item.Title}</div>
       </div>
       <div>
-        <div>DueDate</div>
+        <div>
+          <strong>Description</strong>
+        </div>
+        <div>{props.item.Description}</div>
+      </div>
+      <div>
+        <div>
+          <strong>DueDate</strong>
+        </div>
         <div>{props.item.DueDate}</div>
       </div>
       <div>
-        <div>ExecutionDate</div>
+        <div>
+          <strong>ExecutionDate</strong>
+        </div>
         <div>{props.item.ExecutionDate}</div>
       </div>
       <Button

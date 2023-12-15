@@ -5,12 +5,9 @@ export interface IListItem {
   "odata.editLink": string
   FileSystemObjectType: number
   Id: number
-  ServerRedirectedEmbedUri: any
   ServerRedirectedEmbedUrl: string
   ContentTypeId: string
   Title: string
-  OData__ColorTag: any
-  ComplianceAssetId: any
   Description: string
   DueDate: string
   ExecutionDate: string
@@ -18,7 +15,6 @@ export interface IListItem {
   RequestArea: string
   AssignedManagerId: number
   AssignedManagerStringId: string
-  Tags: any
   StatusId: number
   ID: number
   Modified: string
