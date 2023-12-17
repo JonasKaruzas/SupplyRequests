@@ -21,11 +21,21 @@ import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { IFormState } from "./RequestForm";
 import { DetailsListDocumentsExample } from "./DetailsListDocumentsExample";
 import RequestList from "./RequestList";
+import { IRequestStatusListItem } from "./IRequestStatusListItem";
+import { IRequestTypeListItem } from "./IRequestTypeListItem";
 
 const _requestsTable = "Requests";
+const _requestsStatusesTable = "RequestStatuses";
+const _requestsTypesTable = "RequestTypes";
 
 export const SpContext = createContext<WebPartContext | null>(null);
 export const SelectedListItemContext = createContext<IListItem | null>(null);
+export const RequestsTypesContext = createContext<
+  IRequestTypeListItem[] | null
+>(null);
+export const RequestsStatusesContext = createContext<
+  IRequestStatusListItem[] | null
+>(null);
 
 const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   props: ISupplyRequestsProps,
@@ -33,6 +43,12 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   const { context } = props;
   const sp = spfi().using(SPFx(context));
 
+  const [requestsStatusesList, setRequestsStatusesList] = useState<
+    IRequestStatusListItem[]
+  >([]);
+  const [requestsTypesList, setRequestsTypesList] = useState<
+    IRequestTypeListItem[]
+  >([]);
   const [requestsList, setRequestsList] = useState<IListItem[]>([]);
   const [selectedListItem, setSelectedListItem] = useState<IListItem | null>(
     null,
@@ -45,6 +61,28 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
         .getByTitle(_requestsTable)
         .items();
       setRequestsList(items);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getStatusesItems = async (): Promise<void> => {
+    try {
+      const items: IRequestStatusListItem[] | [] = await sp.web.lists
+        .getByTitle(_requestsStatusesTable)
+        .items();
+      setRequestsStatusesList(items);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getTypesItems = async (): Promise<void> => {
+    try {
+      const items: IRequestTypeListItem[] | [] = await sp.web.lists
+        .getByTitle(_requestsTypesTable)
+        .items();
+      setRequestsTypesList(items);
     } catch (error) {
       console.log(error);
     }
@@ -99,6 +137,8 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   useEffect(() => {
     const getData = async (): Promise<void> => {
       try {
+        await getTypesItems();
+        await getStatusesItems();
         await getListItems();
       } catch (error) {
         console.log(error);
@@ -116,33 +156,37 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
 
   return (
     <SpContext.Provider value={props.context}>
-      <SelectedListItemContext.Provider value={selectedListItem}>
-        <FluentProvider theme={webLightTheme}>
-          <FormPanel
-            onAddItem={addItem}
-            onDelete={deleteItem}
-            onUpdateItem={updateItem}
-            formPanelVisible={formPanelVisible}
-            hideFormPanel={hideFormPanel}
-            showFormPanel={showFormPanel}
-          />
+      <RequestsStatusesContext.Provider value={requestsStatusesList}>
+        <RequestsTypesContext.Provider value={requestsTypesList}>
+          <SelectedListItemContext.Provider value={selectedListItem}>
+            <FluentProvider theme={webLightTheme}>
+              <FormPanel
+                onAddItem={addItem}
+                onDelete={deleteItem}
+                onUpdateItem={updateItem}
+                formPanelVisible={formPanelVisible}
+                hideFormPanel={hideFormPanel}
+                showFormPanel={showFormPanel}
+              />
 
-          <RequestList />
+              <RequestList list={requestsList} />
 
-          <DetailsListDocumentsExample />
-          {requestsList.length > 0 ? (
-            <div>
-              {requestsList.map((item) => (
-                <ListItem key={item.Id} item={item} onSelect={selectItem} />
-              ))}
-            </div>
-          ) : (
-            <Skeleton {...props}>
-              <SkeletonItem />
-            </Skeleton>
-          )}
-        </FluentProvider>
-      </SelectedListItemContext.Provider>
+              <DetailsListDocumentsExample />
+              {requestsList.length > 0 ? (
+                <div>
+                  {requestsList.map((item) => (
+                    <ListItem key={item.Id} item={item} onSelect={selectItem} />
+                  ))}
+                </div>
+              ) : (
+                <Skeleton {...props}>
+                  <SkeletonItem />
+                </Skeleton>
+              )}
+            </FluentProvider>
+          </SelectedListItemContext.Provider>
+        </RequestsTypesContext.Provider>
+      </RequestsStatusesContext.Provider>
     </SpContext.Provider>
   );
 };

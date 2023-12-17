@@ -12,10 +12,12 @@ export interface IListItem {
   DueDate: string
   ExecutionDate: string
   RequestTypeId: number
+  RequestTypeText: string
   RequestArea: string
   AssignedManagerId: number
   AssignedManagerStringId: string
   StatusId: number
+  StatusText: string
   ID: number
   Modified: string
   Created: string
