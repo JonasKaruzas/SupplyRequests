@@ -5,36 +5,40 @@ import { SelectedListItemContext } from "./SupplyRequests";
 
 import { Label } from "@fluentui/react/lib/Label";
 import { TextField } from "@fluentui/react/lib/TextField";
-import { IRequestForm } from "./IRequestForm";
+import { IRequestForm } from "./interfaces/IRequestForm";
 import { DefaultButton } from "@fluentui/react/lib/Button";
 
 import { DatePicker } from "@fluentui/react";
 
-import { SpContext } from "./SupplyRequests";
-// import * as moment from "moment";
+import { CurrentUserContext } from "./SupplyRequests";
 
 export interface IFormState {
   Id: number;
+  AuthorId: number;
   Title: string;
   Description: string;
   DueDate: Date | undefined;
+  StatusId: number;
 }
-console.log("wtf");
 
 const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
+  const currentUser = useContext(CurrentUserContext);
+  const selectedListItem = useContext(SelectedListItemContext);
+
+  console.log(" ----------- currentUser - -----------");
+  console.log(currentUser);
+
   const defaultFormState = {
     Id: 0,
+    AuthorId: currentUser?.Id ?? 0,
     Title: "",
     Description: "",
     // RequestType: "",
     // RequestArea: "",
     DueDate: undefined,
+    StatusId: 1,
     // Tags: "",
   };
-
-  const selectedListItem = useContext(SelectedListItemContext);
-  const context = useContext(SpContext);
-  console.log(context);
 
   const initialFormDataState = (): IFormState => {
     if (!selectedListItem) {
@@ -43,34 +47,27 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
 
     return {
       Id: selectedListItem.Id,
+      AuthorId: selectedListItem.AuthorId,
       Title: selectedListItem.Title,
       Description: selectedListItem.Description,
       DueDate: new Date(selectedListItem.DueDate),
+      StatusId: selectedListItem.StatusId,
     };
   };
 
   const [formData, setFormData] = useState(initialFormDataState);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    console.log(formData);
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const onDateChange = (date: Date | undefined): void => {
-    console.log("date");
-    console.log(date);
-    // if (context) {
-    //   const currentCultureName =
-    //     context.pageContext.legacyPageContext.currentCultureName;
-    //   moment.locale(currentCultureName);
-    //   const dateString = moment(new Date()).format("L");
-    //   console.log("dateString");
-    //   console.log(dateString);
-    // }
+    console.log(formData);
 
     if (date === undefined) return;
     setFormData({ ...formData, DueDate: date });
-    // setFormData({ ...formData, DueDate: date.toISOString() });
   };
 
   const onSubmit = async (e: React.FormEvent): Promise<void> => {

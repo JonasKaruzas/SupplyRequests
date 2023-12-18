@@ -1,17 +1,10 @@
 import * as React from "react";
-// import { useContext } from "react";
 import { DefaultButton } from "@fluentui/react/lib/Button";
 import { Panel } from "@fluentui/react/lib/Panel";
-// import { useBoolean } from "@fluentui/react-hooks";
 import RequestForm from "./RequestForm";
-import { IFormPanel } from "./IFormPanel";
-// import { SpContext } from "./SupplyRequests";
-
-// import { SelectedListItemContext } from "./SupplyRequests";
+import { IFormPanel } from "./interfaces/IFormPanel";
 
 const FormPanel: React.FC<IFormPanel> = (props: IFormPanel) => {
-  // const selectedListItem = useContext(SelectedListItemContext);
-
   const closePanel = (): void => {
     props.hideFormPanel();
   };
@@ -44,7 +37,6 @@ const FormPanel: React.FC<IFormPanel> = (props: IFormPanel) => {
         onDismiss={closePanel}
         closeButtonAriaLabel="Close"
       >
-        {/* {selectedListItem ? <div>{selectedListItem.Id}</div> : <div>null</div>} */}
         <RequestForm
           onAddItem={onSave}
           onDelete={onDelete}

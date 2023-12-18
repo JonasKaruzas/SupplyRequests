@@ -26,4 +26,6 @@ export interface IListItem {
   OData__UIVersionString: string
   Attachments: boolean
   GUID: string
+  UserFullName: string
+  AssignedManagerText: string
 }

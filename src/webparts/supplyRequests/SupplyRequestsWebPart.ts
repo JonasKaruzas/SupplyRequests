@@ -10,7 +10,7 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 import * as strings from 'SupplyRequestsWebPartStrings';
 import SupplyRequests from './components/SupplyRequests';
-import { ISupplyRequestsProps } from './components/ISupplyRequestsProps';
+import { ISupplyRequestsProps } from './components/interfaces/ISupplyRequestsProps';
 
 export interface ISupplyRequestsWebPartProps {
   description: string;

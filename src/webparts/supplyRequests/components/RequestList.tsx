@@ -1,55 +1,108 @@
-import { DetailsList } from "@fluentui/react";
+import { DetailsList, IColumn } from "@fluentui/react";
 import * as React from "react";
+import { useEffect, useState } from "react";
 import { useContext } from "react";
-import { IListItem } from "./IListItem";
+import { IListItem } from "./interfaces/IListItem";
 import { RequestsStatusesContext } from "./SupplyRequests";
 import { RequestsTypesContext } from "./SupplyRequests";
+import { Button } from "@fluentui/react-components";
+
+import { EditRegular } from "@fluentui/react-icons";
+import { StatusType } from "./enums/StatusType";
+
+import { AllUsersContext } from "./SupplyRequests";
 
 interface IRequestListProps {
   list: IListItem[];
+  onSelect: (id: number) => void;
 }
 
 const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
   const requestStatuses = useContext(RequestsStatusesContext) ?? [];
   const requestTypes = useContext(RequestsTypesContext) ?? [];
+  const allUsers = useContext(AllUsersContext) ?? [];
 
-  const items = props.list;
+  console.log(allUsers);
 
-  const mappedItems = items.map((item) => {
-    const findStatusText = (id: number): string => {
-      let res = "";
+  const [items, setItems] = useState(props.list);
 
-      for (let i = 0; i < requestStatuses.length; i++) {
-        if (requestStatuses[i].Id === id) {
-          res = requestStatuses[i].Title;
-          break;
+  const mapItems = (list: IListItem[]): IListItem[] => {
+    const mappedList = list.map((item) => {
+      const findStatusText = (id: number): string => {
+        let res = "";
+
+        for (let i = 0; i < requestStatuses.length; i++) {
+          if (requestStatuses[i].Id === id) {
+            res = requestStatuses[i].Title;
+          }
         }
-      }
 
-      return res;
-    };
+        return res;
+      };
 
-    const findTypeText = (id: number): string => {
-      let res = "";
+      const findTypeText = (id: number): string => {
+        let res = "";
 
-      for (let i = 0; i < requestTypes.length; i++) {
-        if (requestTypes[i].Id === id) {
-          res = requestTypes[i].Title;
-          break;
+        for (let i = 0; i < requestTypes.length; i++) {
+          if (requestTypes[i].Id === id) {
+            res = requestTypes[i].Title;
+            break;
+          }
         }
-      }
 
-      return res;
-    };
+        return res;
+      };
 
-    return {
-      ...item,
-      StatusText: findStatusText(item.Id),
-      RequestTypeText: findTypeText(item.Id),
-    };
-  });
+      const findUserName = (id: number): string => {
+        let res = "";
+
+        for (let i = 0; i < allUsers.length; i++) {
+          if (allUsers[i].Id === id) {
+            res = allUsers[i].Title;
+            break;
+          }
+        }
+        return res;
+      };
+
+      return {
+        ...item,
+        StatusText: findStatusText(item.StatusId),
+        RequestTypeText: findTypeText(item.RequestTypeId),
+        UserFullName: findUserName(item.AuthorId),
+        AssignedManagerText: findUserName(item.AssignedManagerId),
+      };
+    });
+
+    return mappedList;
+  };
+
+  useEffect(() => {
+    setItems(mapItems(props.list));
+  }, [props.list, allUsers]);
 
   const columns = [
+    {
+      key: "columnA",
+      name: "",
+      minWidth: 50,
+      fieldName: "Edit",
+      onRender: (item: IListItem, index: number, column: IColumn) => {
+        return item.StatusId === StatusType.New ? (
+          <Button
+            shape="circular"
+            onClick={() => props.onSelect(item.Id)}
+            icon={<EditRegular />}
+          />
+        ) : null;
+      },
+    },
+    {
+      key: "columnB",
+      name: "Status;",
+      minWidth: 50,
+      fieldName: "StatusText",
+    },
     { key: "column1", name: "Title", minWidth: 150, fieldName: "Title" },
     {
       key: "column2",
@@ -57,7 +110,19 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
       minWidth: 100,
       fieldName: "Description",
     },
+    {
+      key: "column2B",
+      name: "Author",
+      minWidth: 100,
+      fieldName: "UserFullName",
+    },
     { key: "column3", name: "Due Date", minWidth: 100, fieldName: "DueDate" },
+    {
+      key: "column3B",
+      name: "Execution Date",
+      minWidth: 100,
+      fieldName: "ExecutionDate",
+    },
     {
       key: "column4",
       name: "Request Type",
@@ -76,19 +141,19 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
       minWidth: 150,
       fieldName: "AssignedManagerId",
     },
-    { key: "column7", name: "Tags", minWidth: 50, fieldName: "car" },
     {
-      key: "column8",
-      name: "Status",
-      minWidth: 50,
-      fieldName: "StatusText",
+      key: "column6B",
+      name: "Assigned Manager",
+      minWidth: 150,
+      fieldName: "AssignedManagerText",
     },
+    { key: "column7", name: "Tags", minWidth: 50, fieldName: "car" },
   ];
 
   return (
     <>
       <h3>Request List</h3>
-      <DetailsList items={mappedItems} columns={columns} selectionMode={0} />
+      <DetailsList items={items} columns={columns} selectionMode={0} />
     </>
   );
 };
