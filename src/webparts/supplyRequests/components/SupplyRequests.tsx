@@ -21,6 +21,7 @@ import { WebPartContext } from "@microsoft/sp-webpart-base";
 import RequestList from "./RequestList";
 import FormPanel from "./FormPanel";
 import { ICurrentUser } from "./interfaces/ICurrentUser";
+import { UserGroups } from "./enums/UserGroups";
 
 const _requestsTable = "Requests";
 const _requestsStatusesTable = "RequestStatuses";
@@ -36,6 +37,7 @@ export const RequestsStatusesContext = createContext<
 >(null);
 export const CurrentUserContext = createContext<ICurrentUser | null>(null);
 export const AllUsersContext = createContext<ICurrentUser[]>([]);
+export const IsUserAManagerContext = createContext<boolean>(false);
 
 const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   props: ISupplyRequestsProps,
@@ -56,8 +58,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   const [formPanelVisible, setFormPanelVisible] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<ICurrentUser | null>(null);
   const [allUsers, setAllUsers] = useState<ICurrentUser[]>([]);
-
-  // TODO: Users, current user, usergroups
+  const [isUserAManager, setIsUserAManager] = useState<boolean>(false);
 
   const getListItems = async (): Promise<void> => {
     try {
@@ -110,19 +111,17 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     }
   };
 
-  const getAllManagers = async (): Promise<void> => {
+  const getIsUserAManager = async (): Promise<void> => {
     try {
-      const allUsers = await sp.web.siteUsers();
-      console.log("allUsers");
-      console.log(allUsers);
+      const userGroups = await sp.web.currentUser.groups();
 
-      // const groups = await sp.web.siteGroups();
-      // console.log("groups");
-      // console.log(groups);
+      const group = userGroups.filter(
+        (item) => item.Id === UserGroups["SupplyDepartment Managers"],
+      )[0];
 
-      // const userGroups = await sp.web.currentUser.groups();
-      // console.log("userGroups");
-      // console.log(userGroups);
+      if (group) {
+        setIsUserAManager(true);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -181,7 +180,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
         await getStatusesItems();
         await getListItems();
         await getCurrentUser();
-        await getAllManagers();
+        await getIsUserAManager();
         await getAllUsers();
       } catch (error) {
         console.error(error);
@@ -197,32 +196,34 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     }
   }, [selectItem]);
 
-  console.log(requestsList);
-
   return (
     <SpContext.Provider value={props.context}>
-      <AllUsersContext.Provider value={allUsers}>
-        <CurrentUserContext.Provider value={currentUser}>
-          <RequestsStatusesContext.Provider value={requestsStatusesList}>
-            <RequestsTypesContext.Provider value={requestsTypesList}>
-              <SelectedListItemContext.Provider value={selectedListItem}>
-                <FluentProvider theme={webLightTheme}>
-                  <FormPanel
-                    onAddItem={addItem}
-                    onDelete={deleteItem}
-                    onUpdateItem={updateItem}
-                    formPanelVisible={formPanelVisible}
-                    hideFormPanel={hideFormPanel}
-                    showFormPanel={showFormPanel}
-                  />
+      <IsUserAManagerContext.Provider value={isUserAManager}>
+        <AllUsersContext.Provider value={allUsers}>
+          <CurrentUserContext.Provider value={currentUser}>
+            <RequestsStatusesContext.Provider value={requestsStatusesList}>
+              <RequestsTypesContext.Provider value={requestsTypesList}>
+                <SelectedListItemContext.Provider value={selectedListItem}>
+                  <FluentProvider theme={webLightTheme}>
+                    {isUserAManager ? null : (
+                      <FormPanel
+                        onAddItem={addItem}
+                        onDelete={deleteItem}
+                        onUpdateItem={updateItem}
+                        formPanelVisible={formPanelVisible}
+                        hideFormPanel={hideFormPanel}
+                        showFormPanel={showFormPanel}
+                      />
+                    )}
 
-                  <RequestList list={requestsList} onSelect={selectItem} />
-                </FluentProvider>
-              </SelectedListItemContext.Provider>
-            </RequestsTypesContext.Provider>
-          </RequestsStatusesContext.Provider>
-        </CurrentUserContext.Provider>
-      </AllUsersContext.Provider>
+                    <RequestList list={requestsList} onSelect={selectItem} />
+                  </FluentProvider>
+                </SelectedListItemContext.Provider>
+              </RequestsTypesContext.Provider>
+            </RequestsStatusesContext.Provider>
+          </CurrentUserContext.Provider>
+        </AllUsersContext.Provider>
+      </IsUserAManagerContext.Provider>
     </SpContext.Provider>
   );
 };

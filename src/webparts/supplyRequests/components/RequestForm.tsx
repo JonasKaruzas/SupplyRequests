@@ -11,6 +11,7 @@ import { DefaultButton } from "@fluentui/react/lib/Button";
 import { DatePicker } from "@fluentui/react";
 
 import { CurrentUserContext } from "./SupplyRequests";
+// import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
 
 export interface IFormState {
   Id: number;
@@ -24,9 +25,6 @@ export interface IFormState {
 const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   const currentUser = useContext(CurrentUserContext);
   const selectedListItem = useContext(SelectedListItemContext);
-
-  console.log(" ----------- currentUser - -----------");
-  console.log(currentUser);
 
   const defaultFormState = {
     Id: 0,
@@ -83,6 +81,11 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     await props.onDelete(id);
   };
 
+  // Request type: Lookup
+  // Request Area: Choice
+  // Tags: Managed metadata
+  // Assigned Manager: Person or Group
+
   return (
     <>
       <form onSubmit={onSubmit}>
@@ -114,6 +117,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
             }
           }}
         />
+        {/* <RequestFormPeoplePicker /> */}
 
         <DefaultButton primary type="submit">
           {selectedListItem ? "Update" : "Save"}

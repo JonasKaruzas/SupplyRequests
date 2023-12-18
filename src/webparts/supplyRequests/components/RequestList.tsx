@@ -11,6 +11,8 @@ import { EditRegular } from "@fluentui/react-icons";
 import { StatusType } from "./enums/StatusType";
 
 import { AllUsersContext } from "./SupplyRequests";
+import { IsUserAManagerContext } from "./SupplyRequests";
+import { CurrentUserContext } from "./SupplyRequests";
 
 interface IRequestListProps {
   list: IListItem[];
@@ -21,8 +23,8 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
   const requestStatuses = useContext(RequestsStatusesContext) ?? [];
   const requestTypes = useContext(RequestsTypesContext) ?? [];
   const allUsers = useContext(AllUsersContext) ?? [];
-
-  console.log(allUsers);
+  const isUserAManager = useContext(IsUserAManagerContext) ?? false;
+  const currentUser = useContext(CurrentUserContext) ?? null;
 
   const [items, setItems] = useState(props.list);
 
@@ -74,12 +76,19 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
       };
     });
 
-    return mappedList;
+    if (!isUserAManager) {
+      const filteredList = mappedList.filter((item) => {
+        return item.AuthorId === currentUser?.Id;
+      });
+      return filteredList;
+    } else {
+      return mappedList;
+    }
   };
 
   useEffect(() => {
     setItems(mapItems(props.list));
-  }, [props.list, allUsers]);
+  }, [props.list, allUsers, isUserAManager, currentUser]);
 
   const columns = [
     {
