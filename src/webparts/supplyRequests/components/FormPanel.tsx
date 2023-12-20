@@ -1,10 +1,14 @@
 import * as React from "react";
+import { useContext } from "react";
 import { DefaultButton } from "@fluentui/react/lib/Button";
 import { Panel } from "@fluentui/react/lib/Panel";
 import RequestForm from "./RequestForm";
 import { IFormPanel } from "./interfaces/IFormPanel";
+import { IsUserAManagerContext } from "./SupplyRequests";
 
 const FormPanel: React.FC<IFormPanel> = (props: IFormPanel) => {
+  const isUserAManager = useContext(IsUserAManagerContext);
+
   const closePanel = (): void => {
     props.hideFormPanel();
   };
@@ -30,7 +34,9 @@ const FormPanel: React.FC<IFormPanel> = (props: IFormPanel) => {
 
   return (
     <div>
-      <DefaultButton primary text="Add request" onClick={openPanel} />
+      {isUserAManager ? null : (
+        <DefaultButton primary text="Add request" onClick={openPanel} />
+      )}
       <Panel
         headerText="Request info"
         isOpen={props.formPanelVisible}

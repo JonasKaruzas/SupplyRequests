@@ -139,6 +139,8 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   };
 
   const updateItem = async (formData: IFormState): Promise<void> => {
+    if (!formData.Id) return;
+
     await sp.web.lists
       .getByTitle(_requestsTable)
       .items.getById(formData.Id)
@@ -205,17 +207,14 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
               <RequestsTypesContext.Provider value={requestsTypesList}>
                 <SelectedListItemContext.Provider value={selectedListItem}>
                   <FluentProvider theme={webLightTheme}>
-                    {isUserAManager ? null : (
-                      <FormPanel
-                        onAddItem={addItem}
-                        onDelete={deleteItem}
-                        onUpdateItem={updateItem}
-                        formPanelVisible={formPanelVisible}
-                        hideFormPanel={hideFormPanel}
-                        showFormPanel={showFormPanel}
-                      />
-                    )}
-
+                    <FormPanel
+                      onAddItem={addItem}
+                      onDelete={deleteItem}
+                      onUpdateItem={updateItem}
+                      formPanelVisible={formPanelVisible}
+                      hideFormPanel={hideFormPanel}
+                      showFormPanel={showFormPanel}
+                    />
                     <RequestList list={requestsList} onSelect={selectItem} />
                   </FluentProvider>
                 </SelectedListItemContext.Provider>

@@ -148,15 +148,9 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
       key: "column6",
       name: "Assigned Manager",
       minWidth: 150,
-      fieldName: "AssignedManagerId",
-    },
-    {
-      key: "column6B",
-      name: "Assigned Manager",
-      minWidth: 150,
       fieldName: "AssignedManagerText",
     },
-    { key: "column7", name: "Tags", minWidth: 50, fieldName: "car" },
+    { key: "column7", name: "Tags", minWidth: 50, fieldName: "tags" },
   ];
 
   return (

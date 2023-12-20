@@ -8,18 +8,21 @@ import { TextField } from "@fluentui/react/lib/TextField";
 import { IRequestForm } from "./interfaces/IRequestForm";
 import { DefaultButton } from "@fluentui/react/lib/Button";
 
-import { DatePicker } from "@fluentui/react";
+import { DatePicker, IPersonaProps } from "@fluentui/react";
 
 import { CurrentUserContext } from "./SupplyRequests";
-// import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
+import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
 
 export interface IFormState {
-  Id: number;
+  // eslint-disable-next-line @rushstack/no-new-null
+  Id: number | null;
   AuthorId: number;
   Title: string;
   Description: string;
   DueDate: Date | undefined;
   StatusId: number;
+  // eslint-disable-next-line @rushstack/no-new-null
+  AssignedManagerId: number | null;
 }
 
 const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
@@ -27,7 +30,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   const selectedListItem = useContext(SelectedListItemContext);
 
   const defaultFormState = {
-    Id: 0,
+    Id: null,
     AuthorId: currentUser?.Id ?? 0,
     Title: "",
     Description: "",
@@ -36,6 +39,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     DueDate: undefined,
     StatusId: 1,
     // Tags: "",
+    AssignedManagerId: null,
   };
 
   const initialFormDataState = (): IFormState => {
@@ -50,6 +54,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
       Description: selectedListItem.Description,
       DueDate: new Date(selectedListItem.DueDate),
       StatusId: selectedListItem.StatusId,
+      AssignedManagerId: selectedListItem.AssignedManagerId,
     };
   };
 
@@ -66,6 +71,21 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
 
     if (date === undefined) return;
     setFormData({ ...formData, DueDate: date });
+  };
+
+  const onManagerChange = (persons: IPersonaProps[]): void => {
+    if (persons.length < 1) {
+      setFormData({
+        ...formData,
+        AssignedManagerId: null,
+      });
+    } else {
+      if (persons[0].id === undefined) return;
+      setFormData({
+        ...formData,
+        AssignedManagerId: parseInt(persons[0].id, 10),
+      });
+    }
   };
 
   const onSubmit = async (e: React.FormEvent): Promise<void> => {
@@ -117,7 +137,10 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
             }
           }}
         />
-        {/* <RequestFormPeoplePicker /> */}
+        <RequestFormPeoplePicker
+          assignedManager={formData.AssignedManagerId}
+          onManagerChange={onManagerChange}
+        />
 
         <DefaultButton primary type="submit">
           {selectedListItem ? "Update" : "Save"}
