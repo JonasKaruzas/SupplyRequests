@@ -14,6 +14,7 @@ import { CurrentUserContext } from "./SupplyRequests";
 import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
 import RequestFormRequestArea from "./RequestFormRequestArea";
 import RequestFormRequestType from "./RequestFormRequestType";
+import RequestFormTagPicker from "./RequestFormTagPicker";
 
 export interface IFormState {
   // eslint-disable-next-line @rushstack/no-new-null
@@ -173,6 +174,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
           selectedTypeId={formData.RequestTypeId}
           onTypeChange={onTypeChange}
         />
+        <RequestFormTagPicker />
 
         <DefaultButton primary type="submit">
           {selectedListItem ? "Update" : "Save"}
