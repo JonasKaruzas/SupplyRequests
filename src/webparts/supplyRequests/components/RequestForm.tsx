@@ -8,10 +8,11 @@ import { TextField } from "@fluentui/react/lib/TextField";
 import { IRequestForm } from "./interfaces/IRequestForm";
 import { DefaultButton } from "@fluentui/react/lib/Button";
 
-import { DatePicker, IPersonaProps } from "@fluentui/react";
+import { DatePicker, IDropdownOption, IPersonaProps } from "@fluentui/react";
 
 import { CurrentUserContext } from "./SupplyRequests";
 import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
+import RequestFormRequestArea from "./RequestFormRequestArea";
 
 export interface IFormState {
   // eslint-disable-next-line @rushstack/no-new-null
@@ -19,6 +20,8 @@ export interface IFormState {
   AuthorId: number;
   Title: string;
   Description: string;
+  // eslint-disable-next-line @rushstack/no-new-null
+  RequestArea: string | null;
   DueDate: Date | undefined;
   StatusId: number;
   // eslint-disable-next-line @rushstack/no-new-null
@@ -35,7 +38,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     Title: "",
     Description: "",
     // RequestType: "",
-    // RequestArea: "",
+    RequestArea: null,
     DueDate: undefined,
     StatusId: 1,
     // Tags: "",
@@ -52,6 +55,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
       AuthorId: selectedListItem.AuthorId,
       Title: selectedListItem.Title,
       Description: selectedListItem.Description,
+      RequestArea: selectedListItem.RequestArea,
       DueDate: new Date(selectedListItem.DueDate),
       StatusId: selectedListItem.StatusId,
       AssignedManagerId: selectedListItem.AssignedManagerId,
@@ -88,6 +92,16 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     }
   };
 
+  const onOptionChange = (
+    event: React.FormEvent<HTMLDivElement>,
+    item: IDropdownOption,
+  ): void => {
+    setFormData({
+      ...formData,
+      RequestArea: item.text,
+    });
+  };
+
   const onSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     if (selectedListItem) {
@@ -102,9 +116,8 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   };
 
   // Request type: Lookup
-  // Request Area: Choice
+
   // Tags: Managed metadata
-  // Assigned Manager: Person or Group
 
   return (
     <>
@@ -140,6 +153,10 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
         <RequestFormPeoplePicker
           assignedManager={formData.AssignedManagerId}
           onManagerChange={onManagerChange}
+        />
+        <RequestFormRequestArea
+          selectedOption={formData.RequestArea}
+          onOptionChange={onOptionChange}
         />
 
         <DefaultButton primary type="submit">

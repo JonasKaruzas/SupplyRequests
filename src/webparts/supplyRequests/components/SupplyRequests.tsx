@@ -7,8 +7,10 @@ import { SPFx, spfi } from "@pnp/sp";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
 import "@pnp/sp/items";
+import "@pnp/sp/fields";
 import "@pnp/sp/site-users/web";
 import "@pnp/sp/site-groups/web";
+import { IFieldInfo } from "@pnp/sp/fields/types";
 
 import type { ISupplyRequestsProps } from "./interfaces/ISupplyRequestsProps";
 import { IListItem } from "./interfaces/IListItem";
@@ -22,10 +24,12 @@ import RequestList from "./RequestList";
 import FormPanel from "./FormPanel";
 import { ICurrentUser } from "./interfaces/ICurrentUser";
 import { UserGroups } from "./enums/UserGroups";
+import { IRequestAreaOptions } from "./interfaces/IRequestAreaOptions";
 
 const _requestsTable = "Requests";
 const _requestsStatusesTable = "RequestStatuses";
 const _requestsTypesTable = "RequestTypes";
+const _requestsRequestAreaColumn = "RequestArea";
 
 export const SpContext = createContext<WebPartContext | null>(null);
 export const SelectedListItemContext = createContext<IListItem | null>(null);
@@ -34,6 +38,9 @@ export const RequestsTypesContext = createContext<
 >(null);
 export const RequestsStatusesContext = createContext<
   IRequestStatusListItem[] | null
+>(null);
+export const RequestsAreaOptionsContext = createContext<
+  IRequestAreaOptions[] | null
 >(null);
 export const CurrentUserContext = createContext<ICurrentUser | null>(null);
 export const AllUsersContext = createContext<ICurrentUser[]>([]);
@@ -59,6 +66,9 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   const [currentUser, setCurrentUser] = useState<ICurrentUser | null>(null);
   const [allUsers, setAllUsers] = useState<ICurrentUser[]>([]);
   const [isUserAManager, setIsUserAManager] = useState<boolean>(false);
+  const [areaOptions, setAreaOptions] = useState<IRequestAreaOptions[] | null>(
+    null,
+  );
 
   const getListItems = async (): Promise<void> => {
     try {
@@ -127,6 +137,27 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     }
   };
 
+  const getAreaOptions = async (): Promise<void> => {
+    try {
+      const fields: IFieldInfo = await sp.web.lists
+        .getByTitle(_requestsTable)
+        .fields.getByInternalNameOrTitle(_requestsRequestAreaColumn)();
+
+      if (fields.Choices === undefined) {
+        setAreaOptions(null);
+      } else {
+        const optionsArray = fields.Choices.map((item) => ({
+          key: item,
+          text: item,
+        }));
+
+        setAreaOptions(optionsArray);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const addItem = async (formData: IFormState): Promise<void> => {
     await sp.web.lists.getByTitle(_requestsTable).items.add(formData);
     await getListItems();
@@ -184,6 +215,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
         await getCurrentUser();
         await getIsUserAManager();
         await getAllUsers();
+        await getAreaOptions();
       } catch (error) {
         console.error(error);
       }
@@ -200,29 +232,31 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
 
   return (
     <SpContext.Provider value={props.context}>
-      <IsUserAManagerContext.Provider value={isUserAManager}>
-        <AllUsersContext.Provider value={allUsers}>
-          <CurrentUserContext.Provider value={currentUser}>
-            <RequestsStatusesContext.Provider value={requestsStatusesList}>
-              <RequestsTypesContext.Provider value={requestsTypesList}>
-                <SelectedListItemContext.Provider value={selectedListItem}>
-                  <FluentProvider theme={webLightTheme}>
-                    <FormPanel
-                      onAddItem={addItem}
-                      onDelete={deleteItem}
-                      onUpdateItem={updateItem}
-                      formPanelVisible={formPanelVisible}
-                      hideFormPanel={hideFormPanel}
-                      showFormPanel={showFormPanel}
-                    />
-                    <RequestList list={requestsList} onSelect={selectItem} />
-                  </FluentProvider>
-                </SelectedListItemContext.Provider>
-              </RequestsTypesContext.Provider>
-            </RequestsStatusesContext.Provider>
-          </CurrentUserContext.Provider>
-        </AllUsersContext.Provider>
-      </IsUserAManagerContext.Provider>
+      <RequestsAreaOptionsContext.Provider value={areaOptions}>
+        <IsUserAManagerContext.Provider value={isUserAManager}>
+          <AllUsersContext.Provider value={allUsers}>
+            <CurrentUserContext.Provider value={currentUser}>
+              <RequestsStatusesContext.Provider value={requestsStatusesList}>
+                <RequestsTypesContext.Provider value={requestsTypesList}>
+                  <SelectedListItemContext.Provider value={selectedListItem}>
+                    <FluentProvider theme={webLightTheme}>
+                      <FormPanel
+                        onAddItem={addItem}
+                        onDelete={deleteItem}
+                        onUpdateItem={updateItem}
+                        formPanelVisible={formPanelVisible}
+                        hideFormPanel={hideFormPanel}
+                        showFormPanel={showFormPanel}
+                      />
+                      <RequestList list={requestsList} onSelect={selectItem} />
+                    </FluentProvider>
+                  </SelectedListItemContext.Provider>
+                </RequestsTypesContext.Provider>
+              </RequestsStatusesContext.Provider>
+            </CurrentUserContext.Provider>
+          </AllUsersContext.Provider>
+        </IsUserAManagerContext.Provider>
+      </RequestsAreaOptionsContext.Provider>
     </SpContext.Provider>
   );
 };
