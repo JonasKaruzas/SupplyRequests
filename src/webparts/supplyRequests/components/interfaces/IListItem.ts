@@ -1,3 +1,9 @@
+interface ITag {
+  Label: string
+  TermGuid: string
+  WssId: number
+}
+
 export interface IListItem {
   "odata.type": string
   "odata.id": string
@@ -28,4 +34,5 @@ export interface IListItem {
   GUID: string
   UserFullName: string
   AssignedManagerText: string
+  Tags: ITag[]
 }

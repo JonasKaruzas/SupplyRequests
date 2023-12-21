@@ -90,6 +90,10 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
     setItems(mapItems(props.list));
   }, [props.list, allUsers, isUserAManager, currentUser]);
 
+  const tagLabelStyle = {
+    marginRight: "8px",
+  };
+
   const columns = [
     {
       key: "columnA",
@@ -150,7 +154,25 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
       minWidth: 150,
       fieldName: "AssignedManagerText",
     },
-    { key: "column7", name: "Tags", minWidth: 50, fieldName: "tags" },
+    {
+      key: "column7",
+      name: "Tags",
+      fieldName: "Tags",
+      minWidth: 100,
+      maxWidth: 200,
+      isMultiline: true,
+      onRender: (item: IListItem) => {
+        return (
+          <div>
+            {item.Tags.map((tag) => (
+              <span key={tag.WssId} style={tagLabelStyle}>
+                {tag.Label}
+              </span>
+            ))}
+          </div>
+        );
+      },
+    },
   ];
 
   return (
