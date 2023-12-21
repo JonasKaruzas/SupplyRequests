@@ -13,6 +13,7 @@ import { DatePicker, IDropdownOption, IPersonaProps } from "@fluentui/react";
 import { CurrentUserContext } from "./SupplyRequests";
 import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
 import RequestFormRequestArea from "./RequestFormRequestArea";
+import RequestFormRequestType from "./RequestFormRequestType";
 
 export interface IFormState {
   // eslint-disable-next-line @rushstack/no-new-null
@@ -20,6 +21,8 @@ export interface IFormState {
   AuthorId: number;
   Title: string;
   Description: string;
+  // eslint-disable-next-line @rushstack/no-new-null
+  RequestTypeId: number | null;
   // eslint-disable-next-line @rushstack/no-new-null
   RequestArea: string | null;
   DueDate: Date | undefined;
@@ -37,7 +40,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     AuthorId: currentUser?.Id ?? 0,
     Title: "",
     Description: "",
-    // RequestType: "",
+    RequestTypeId: null,
     RequestArea: null,
     DueDate: undefined,
     StatusId: 1,
@@ -55,6 +58,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
       AuthorId: selectedListItem.AuthorId,
       Title: selectedListItem.Title,
       Description: selectedListItem.Description,
+      RequestTypeId: selectedListItem.RequestTypeId,
       RequestArea: selectedListItem.RequestArea,
       DueDate: new Date(selectedListItem.DueDate),
       StatusId: selectedListItem.StatusId,
@@ -102,6 +106,15 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     });
   };
 
+  const onTypeChange = (item: IDropdownOption): void => {
+    if (typeof item.key === "string") return;
+
+    setFormData({
+      ...formData,
+      RequestTypeId: item.key,
+    });
+  };
+
   const onSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     if (selectedListItem) {
@@ -114,8 +127,6 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   const onDelete = async (id: number): Promise<void> => {
     await props.onDelete(id);
   };
-
-  // Request type: Lookup
 
   // Tags: Managed metadata
 
@@ -157,6 +168,10 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
         <RequestFormRequestArea
           selectedOption={formData.RequestArea}
           onOptionChange={onOptionChange}
+        />
+        <RequestFormRequestType
+          selectedTypeId={formData.RequestTypeId}
+          onTypeChange={onTypeChange}
         />
 
         <DefaultButton primary type="submit">

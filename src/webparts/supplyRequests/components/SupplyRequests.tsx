@@ -56,7 +56,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     IRequestStatusListItem[]
   >([]);
   const [requestsTypesList, setRequestsTypesList] = useState<
-    IRequestTypeListItem[]
+    IRequestTypeListItem[] | []
   >([]);
   const [requestsList, setRequestsList] = useState<IListItem[]>([]);
   const [selectedListItem, setSelectedListItem] = useState<IListItem | null>(
