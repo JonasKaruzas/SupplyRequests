@@ -112,7 +112,7 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
     },
     {
       key: "columnB",
-      name: "Status;",
+      name: "Status",
       minWidth: 50,
       fieldName: "StatusText",
     },

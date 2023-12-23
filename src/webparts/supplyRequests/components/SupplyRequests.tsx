@@ -10,6 +10,8 @@ import "@pnp/sp/items";
 import "@pnp/sp/fields";
 import "@pnp/sp/site-users/web";
 import "@pnp/sp/site-groups/web";
+import "@pnp/sp/taxonomy";
+// import { ITermGroupInfo } from "@pnp/sp/taxonomy";
 import { IFieldInfo } from "@pnp/sp/fields/types";
 
 import type { ISupplyRequestsProps } from "./interfaces/ISupplyRequestsProps";
@@ -25,11 +27,14 @@ import FormPanel from "./FormPanel";
 import { ICurrentUser } from "./interfaces/ICurrentUser";
 import { UserGroups } from "./enums/UserGroups";
 import { IRequestAreaOptions } from "./interfaces/IRequestAreaOptions";
+import { ITermInfo } from "@pnp/sp/taxonomy";
+import { ITag } from "@fluentui/react";
 
 const _requestsTable = "Requests";
 const _requestsStatusesTable = "RequestStatuses";
 const _requestsTypesTable = "RequestTypes";
 const _requestsRequestAreaColumn = "RequestArea";
+const _requestsTagsColumn = "Tags";
 
 export const SpContext = createContext<WebPartContext | null>(null);
 export const SelectedListItemContext = createContext<IListItem | null>(null);
@@ -45,6 +50,7 @@ export const RequestsAreaOptionsContext = createContext<
 export const CurrentUserContext = createContext<ICurrentUser | null>(null);
 export const AllUsersContext = createContext<ICurrentUser[]>([]);
 export const IsUserAManagerContext = createContext<boolean>(false);
+export const AvailableTagsContext = createContext<ITag[] | []>([]);
 
 const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   props: ISupplyRequestsProps,
@@ -69,6 +75,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   const [areaOptions, setAreaOptions] = useState<IRequestAreaOptions[] | null>(
     null,
   );
+  const [availableTags, setAvailableTags] = useState<ITag[] | []>([]);
 
   const getListItems = async (): Promise<void> => {
     try {
@@ -158,6 +165,32 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     }
   };
 
+  const getTags = async (): Promise<void> => {
+    try {
+      const field: IFieldInfo & { TermSetId: string } = await sp.web.lists
+        .getByTitle(_requestsTable)
+        .fields.getByTitle(_requestsTagsColumn)();
+
+      const termSetId = field.TermSetId;
+
+      const terms: ITermInfo[] = await sp.termStore.sets
+        .getById(termSetId)
+        .terms();
+
+      console.log(terms);
+
+      const availableTags = terms.map((term) => ({
+        key: term.id,
+        name: term.labels[0].name,
+      }));
+
+      setAvailableTags(availableTags);
+      console.log(availableTags);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const addItem = async (formData: IFormState): Promise<void> => {
     await sp.web.lists.getByTitle(_requestsTable).items.add(formData);
     await getListItems();
@@ -178,6 +211,24 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
       .update(formData);
     await getListItems();
   };
+
+  // const updateTags = async (): Promise<void> => {
+  //   const fields = await sp.web.lists
+  //     .getByTitle(_requestsTable)
+  //     .fields.filter("Title eq 'Tags_0'")
+  //     .select("Title", "InternalName")();
+
+  //   const oldItem = await sp.web.lists
+  //     .getByTitle(_requestsTable)
+  //     .items.getById(1);
+
+  //   // to do that for each field value you need to serialize each as -1;#{field label}|{field id} joined by ";#"
+  //   const updateVal: { [key: string]: unknown } = {};
+  //   updateVal[fields[0].InternalName] =
+  //     "-1;#null|7903d66e-6fb7-4faa-95c4-c9478a6ac149";
+
+  //   await oldItem.update(updateVal);
+  // };
 
   const selectItem = (id: number): void => {
     const findItem = (id: number): IListItem | null => {
@@ -216,6 +267,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
         await getIsUserAManager();
         await getAllUsers();
         await getAreaOptions();
+        await getTags();
       } catch (error) {
         console.error(error);
       }
@@ -223,6 +275,8 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
 
     getData().catch((error) => console.error(error));
   }, []);
+
+  console.log(requestsList);
 
   useEffect(() => {
     if (selectedListItem) {
@@ -232,31 +286,36 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
 
   return (
     <SpContext.Provider value={props.context}>
-      <RequestsAreaOptionsContext.Provider value={areaOptions}>
-        <IsUserAManagerContext.Provider value={isUserAManager}>
-          <AllUsersContext.Provider value={allUsers}>
-            <CurrentUserContext.Provider value={currentUser}>
-              <RequestsStatusesContext.Provider value={requestsStatusesList}>
-                <RequestsTypesContext.Provider value={requestsTypesList}>
-                  <SelectedListItemContext.Provider value={selectedListItem}>
-                    <FluentProvider theme={webLightTheme}>
-                      <FormPanel
-                        onAddItem={addItem}
-                        onDelete={deleteItem}
-                        onUpdateItem={updateItem}
-                        formPanelVisible={formPanelVisible}
-                        hideFormPanel={hideFormPanel}
-                        showFormPanel={showFormPanel}
-                      />
-                      <RequestList list={requestsList} onSelect={selectItem} />
-                    </FluentProvider>
-                  </SelectedListItemContext.Provider>
-                </RequestsTypesContext.Provider>
-              </RequestsStatusesContext.Provider>
-            </CurrentUserContext.Provider>
-          </AllUsersContext.Provider>
-        </IsUserAManagerContext.Provider>
-      </RequestsAreaOptionsContext.Provider>
+      <AvailableTagsContext.Provider value={availableTags}>
+        <RequestsAreaOptionsContext.Provider value={areaOptions}>
+          <IsUserAManagerContext.Provider value={isUserAManager}>
+            <AllUsersContext.Provider value={allUsers}>
+              <CurrentUserContext.Provider value={currentUser}>
+                <RequestsStatusesContext.Provider value={requestsStatusesList}>
+                  <RequestsTypesContext.Provider value={requestsTypesList}>
+                    <SelectedListItemContext.Provider value={selectedListItem}>
+                      <FluentProvider theme={webLightTheme}>
+                        <FormPanel
+                          onAddItem={addItem}
+                          onDelete={deleteItem}
+                          onUpdateItem={updateItem}
+                          formPanelVisible={formPanelVisible}
+                          hideFormPanel={hideFormPanel}
+                          showFormPanel={showFormPanel}
+                        />
+                        <RequestList
+                          list={requestsList}
+                          onSelect={selectItem}
+                        />
+                      </FluentProvider>
+                    </SelectedListItemContext.Provider>
+                  </RequestsTypesContext.Provider>
+                </RequestsStatusesContext.Provider>
+              </CurrentUserContext.Provider>
+            </AllUsersContext.Provider>
+          </IsUserAManagerContext.Provider>
+        </RequestsAreaOptionsContext.Provider>
+      </AvailableTagsContext.Provider>
     </SpContext.Provider>
   );
 };

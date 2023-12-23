@@ -8,7 +8,12 @@ import { TextField } from "@fluentui/react/lib/TextField";
 import { IRequestForm } from "./interfaces/IRequestForm";
 import { DefaultButton } from "@fluentui/react/lib/Button";
 
-import { DatePicker, IDropdownOption, IPersonaProps } from "@fluentui/react";
+import {
+  DatePicker,
+  IDropdownOption,
+  IPersonaProps,
+  ITag,
+} from "@fluentui/react";
 
 import { CurrentUserContext } from "./SupplyRequests";
 import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
@@ -30,6 +35,7 @@ export interface IFormState {
   StatusId: number;
   // eslint-disable-next-line @rushstack/no-new-null
   AssignedManagerId: number | null;
+  Tags: ITag[];
 }
 
 const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
@@ -45,8 +51,8 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     RequestArea: null,
     DueDate: undefined,
     StatusId: 1,
-    // Tags: "",
     AssignedManagerId: null,
+    Tags: [],
   };
 
   const initialFormDataState = (): IFormState => {
@@ -64,6 +70,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
       DueDate: new Date(selectedListItem.DueDate),
       StatusId: selectedListItem.StatusId,
       AssignedManagerId: selectedListItem.AssignedManagerId,
+      Tags: selectedListItem.Tags,
     };
   };
 
@@ -128,8 +135,6 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   const onDelete = async (id: number): Promise<void> => {
     await props.onDelete(id);
   };
-
-  // Tags: Managed metadata
 
   return (
     <>

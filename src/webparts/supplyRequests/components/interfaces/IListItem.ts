@@ -1,4 +1,6 @@
-interface ITag {
+import { ITag } from "@fluentui/react"
+
+export interface ITag1 {
   Label: string
   TermGuid: string
   WssId: number
@@ -34,5 +36,5 @@ export interface IListItem {
   GUID: string
   UserFullName: string
   AssignedManagerText: string
-  Tags: ITag[]
+  Tags: ITag1[] & ITag[]
 }

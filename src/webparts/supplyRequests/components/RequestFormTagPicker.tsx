@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useContext } from "react";
 
 import {
   TagPicker,
@@ -7,6 +8,9 @@ import {
   IBasePickerSuggestionsProps,
 } from "@fluentui/react/lib/Pickers";
 import { mergeStyles } from "@fluentui/react/lib/Styling";
+
+import { SelectedListItemContext } from "./SupplyRequests";
+import { AvailableTagsContext } from "./SupplyRequests";
 
 const rootClass = mergeStyles({
   maxWidth: 500,
@@ -24,48 +28,40 @@ const pickerSuggestionsProps: IBasePickerSuggestionsProps = {
   noResultsFoundText: "No color tags found",
 };
 
-const testTags: ITag[] = [
-  "black",
-  "blue",
-  "brown",
-  "cyan",
-  "green",
-  "magenta",
-  "mauve",
-  "orange",
-  "pink",
-  "purple",
-  "red",
-  "rose",
-  "violet",
-  "white",
-  "yellow",
-].map((item) => ({ key: item, name: item }));
-
-const listContainsTagList = (tag: ITag, tagList?: ITag[]) => {
-  if (!tagList || !tagList.length || tagList.length === 0) {
-    return false;
-  }
-  return tagList.some((compareTag) => compareTag.key === tag.key);
-};
-
-const filterSuggestedTags = (filterText: string, tagList: ITag[]): ITag[] => {
-  return filterText
-    ? testTags.filter(
-        (tag) =>
-          tag.name.toLowerCase().indexOf(filterText.toLowerCase()) === 0 &&
-          !listContainsTagList(tag, tagList),
-      )
-    : [];
-};
-
+const defaultSelected: ITag[] = ["rose", "red"].map((item) => ({
+  key: item,
+  name: item,
+}));
 const getTextFromItem = (item: ITag) => item.name;
 
 const RequestFormTagPicker: React.FC = () => {
+  const availableTags = useContext(AvailableTagsContext);
+  const selectedItem = useContext(SelectedListItemContext);
+
+  console.log(selectedItem);
+
+  const listContainsTagList = (tag: ITag, tagList?: ITag[]): boolean => {
+    if (!tagList || !tagList.length || tagList.length === 0) {
+      return false;
+    }
+    return tagList.some((compareTag) => compareTag.key === tag.key);
+  };
+
+  const filterSuggestedTags = (filterText: string, tagList: ITag[]): ITag[] => {
+    return filterText
+      ? availableTags.filter(
+          (tag) =>
+            tag.name.toLowerCase().indexOf(filterText.toLowerCase()) === 0 &&
+            !listContainsTagList(tag, tagList),
+        )
+      : [];
+  };
+
   return (
     <div className={rootClass}>
       <label htmlFor="picker1">Tags</label>
       <TagPicker
+        defaultSelectedItems={defaultSelected}
         removeButtonAriaLabel="Remove"
         selectionAriaLabel="Selected colors"
         onResolveSuggestions={filterSuggestedTags}
