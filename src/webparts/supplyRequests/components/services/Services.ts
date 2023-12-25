@@ -30,6 +30,45 @@ class Services {
     this.sp = sp;
   }
 
+  private mapItems = async (list: IListItem[]): Promise<IListItem[]> => {
+    const requestStatuses = await this.getStatusesItems();
+    const requestTypes = await this.getTypesItems();
+    const allUsers = await this.getAllUsers();
+
+    return list.map((item) => {
+      const findStatusText = (id: number): string => {
+        if (Array.isArray(requestStatuses)) {
+          return (
+            requestStatuses.filter((item) => item.Id === id)[0]?.Title ?? ""
+          );
+        }
+        return "";
+      };
+
+      const findTypeText = (id: number): string => {
+        if (Array.isArray(requestTypes)) {
+          return requestTypes.filter((item) => item.Id === id)[0]?.Title ?? "";
+        }
+        return "";
+      };
+
+      const findUserName = (id: number): string => {
+        if (Array.isArray(allUsers)) {
+          return allUsers.filter((item) => item.Id === id)[0]?.Title ?? "";
+        }
+        return "";
+      };
+
+      return {
+        ...item,
+        StatusText: findStatusText(item.StatusId),
+        RequestTypeText: findTypeText(item.RequestTypeId),
+        UserFullName: findUserName(item.AuthorId),
+        AssignedManagerText: findUserName(item.AssignedManagerId),
+      };
+    });
+  };
+
   public getListItems = async (): Promise<IListItem[] | undefined> => {
     try {
       const items: IListItem[] = await this.sp.web.lists
@@ -37,7 +76,7 @@ class Services {
         .items();
 
       if (items && items.length > 0) {
-        return items;
+        return this.mapItems(items);
       }
 
       return undefined;

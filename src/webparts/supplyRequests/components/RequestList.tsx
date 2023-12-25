@@ -1,94 +1,45 @@
 import { DetailsList, IColumn } from "@fluentui/react";
 import * as React from "react";
-import { useEffect, useState } from "react";
-import { useContext } from "react";
+// import { useEffect, useState } from "react";
+// import { useContext } from "react";
 import { IListItem } from "./interfaces/IListItem";
-import { RequestsStatusesContext } from "./SupplyRequests";
-import { RequestsTypesContext } from "./SupplyRequests";
+// import { RequestsStatusesContext } from "./SupplyRequests";
+// import { RequestsTypesContext } from "./SupplyRequests";
 import { Button } from "@fluentui/react-components";
 
 import { EditRegular } from "@fluentui/react-icons";
 import { StatusType } from "./enums/StatusType";
+import { IRequestListProps } from "./interfaces/IRequestListProps";
+// import Services from "./services/Services";
 
-import { AllUsersContext } from "./SupplyRequests";
-import { IsUserAManagerContext } from "./SupplyRequests";
-import { CurrentUserContext } from "./SupplyRequests";
-
-interface IRequestListProps {
-  list: IListItem[];
-  onSelect: (id: number) => void;
-}
+// import { AllUsersContext } from "./SupplyRequests";
+// import { IsUserAManagerContext } from "./SupplyRequests";
+// import { CurrentUserContext } from "./SupplyRequests";
 
 const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
-  const requestStatuses = useContext(RequestsStatusesContext) ?? [];
-  const requestTypes = useContext(RequestsTypesContext) ?? [];
-  const allUsers = useContext(AllUsersContext) ?? [];
-  const isUserAManager = useContext(IsUserAManagerContext) ?? false;
-  const currentUser = useContext(CurrentUserContext) ?? null;
+  // const requestStatuses = useContext(RequestsStatusesContext) ?? [];
+  // const requestTypes = useContext(RequestsTypesContext) ?? [];
+  // const allUsers = useContext(AllUsersContext) ?? [];
+  // const isUserAManager = useContext(IsUserAManagerContext) ?? false;
+  // const currentUser = useContext(CurrentUserContext) ?? null;
 
-  const [items, setItems] = useState(props.list);
+  // const [items, setItems] = useState(props.list);
 
-  const mapItems = (list: IListItem[]): IListItem[] => {
-    const mappedList = list.map((item) => {
-      const findStatusText = (id: number): string => {
-        let res = "";
+  //   if (!isUserAManager) {
+  //     const filteredList = mappedList.filter((item) => {
+  //       return item.AuthorId === currentUser?.Id;
+  //     });
+  //     return filteredList;
+  //   } else {
+  //     return mappedList;
+  //   }
+  // };
 
-        for (let i = 0; i < requestStatuses.length; i++) {
-          if (requestStatuses[i].Id === id) {
-            res = requestStatuses[i].Title;
-          }
-        }
+  // useEffect(() => {
+  //   if (!props.list) return;
 
-        return res;
-      };
-
-      const findTypeText = (id: number): string => {
-        let res = "";
-
-        for (let i = 0; i < requestTypes.length; i++) {
-          if (requestTypes[i].Id === id) {
-            res = requestTypes[i].Title;
-            break;
-          }
-        }
-
-        return res;
-      };
-
-      const findUserName = (id: number): string => {
-        let res = "";
-
-        for (let i = 0; i < allUsers.length; i++) {
-          if (allUsers[i].Id === id) {
-            res = allUsers[i].Title;
-            break;
-          }
-        }
-        return res;
-      };
-
-      return {
-        ...item,
-        StatusText: findStatusText(item.StatusId),
-        RequestTypeText: findTypeText(item.RequestTypeId),
-        UserFullName: findUserName(item.AuthorId),
-        AssignedManagerText: findUserName(item.AssignedManagerId),
-      };
-    });
-
-    if (!isUserAManager) {
-      const filteredList = mappedList.filter((item) => {
-        return item.AuthorId === currentUser?.Id;
-      });
-      return filteredList;
-    } else {
-      return mappedList;
-    }
-  };
-
-  useEffect(() => {
-    setItems(mapItems(props.list));
-  }, [props.list, allUsers, isUserAManager, currentUser]);
+  //   setItems(mapItems(props.list));
+  // }, [props.list, allUsers, isUserAManager, currentUser]);
 
   const tagLabelStyle = {
     marginRight: "8px",
@@ -178,7 +129,12 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
   return (
     <>
       <h3>Request List</h3>
-      <DetailsList items={items} columns={columns} selectionMode={0} />
+
+      {props.list === undefined ? (
+        <p>No list items</p>
+      ) : (
+        <DetailsList items={props.list} columns={columns} selectionMode={0} />
+      )}
     </>
   );
 };
