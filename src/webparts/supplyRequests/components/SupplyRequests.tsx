@@ -1,14 +1,3 @@
-// import { FluentProvider, webLightTheme } from "@fluentui/react-components";
-// import "@pnp/sp/site-groups/web";
-// import "@pnp/sp/taxonomy";
-// import { ITermGroupInfo } from "@pnp/sp/taxonomy";
-// import { IFieldInfo } from "@pnp/sp/fields/types";
-// import { IFormState } from "./RequestForm";
-// import FormPanel from "./FormPanel";
-// import { UserGroups } from "./enums/UserGroups";
-// import { ITermInfo } from "@pnp/sp/taxonomy";
-// import { IAvailableTags } from "./interfaces/IAvailableTags";
-
 import * as React from "react";
 import { useState, useEffect, createContext } from "react";
 
@@ -66,7 +55,6 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
           AllUsersContext: await services.getAllUsers(),
           RequestsAreaOptionsContext: await services.getAreaOptions(),
           RequestsTypesContext: await services.getTypesItems(),
-          // AvailableTagsContext: await services.getTags(),
         });
       } catch (error) {
         console.error(error);

@@ -11,7 +11,6 @@ import {
   defaultDatePickerStrings,
   IDropdownOption,
   IPersonaProps,
-  // ITag,
 } from "@fluentui/react";
 
 import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
@@ -40,7 +39,6 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     DueDate: undefined,
     StatusId: StatusType.New,
     AssignedManagerId: null,
-    // Tags: "",
   };
 
   const initialFormDataState = (): IFormState => {
@@ -58,7 +56,6 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
       DueDate: new Date(selectedListItem.DueDate),
       StatusId: selectedListItem.StatusId,
       AssignedManagerId: selectedListItem.AssignedManagerId,
-      // Tags: selectedListItem.Tags,
     };
   };
 

@@ -1,46 +1,13 @@
 import { DetailsList, IColumn } from "@fluentui/react";
 import * as React from "react";
-// import { useEffect, useState } from "react";
-// import { useContext } from "react";
 import { IListItem } from "./interfaces/IListItem";
-// import { RequestsStatusesContext } from "./SupplyRequests";
-// import { RequestsTypesContext } from "./SupplyRequests";
 import { Button } from "@fluentui/react-components";
 
 import { EditRegular } from "@fluentui/react-icons";
 import { StatusType } from "./enums/StatusType";
 import { IRequestListProps } from "./interfaces/IRequestListProps";
-// import Services from "./services/Services";
-
-// import { AllUsersContext } from "./SupplyRequests";
-// import { IsUserAManagerContext } from "./SupplyRequests";
-// import { CurrentUserContext } from "./SupplyRequests";
 
 const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
-  // const requestStatuses = useContext(RequestsStatusesContext) ?? [];
-  // const requestTypes = useContext(RequestsTypesContext) ?? [];
-  // const allUsers = useContext(AllUsersContext) ?? [];
-  // const isUserAManager = useContext(IsUserAManagerContext) ?? false;
-  // const currentUser = useContext(CurrentUserContext) ?? null;
-
-  // const [items, setItems] = useState(props.list);
-
-  //   if (!isUserAManager) {
-  //     const filteredList = mappedList.filter((item) => {
-  //       return item.AuthorId === currentUser?.Id;
-  //     });
-  //     return filteredList;
-  //   } else {
-  //     return mappedList;
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (!props.list) return;
-
-  //   setItems(mapItems(props.list));
-  // }, [props.list, allUsers, isUserAManager, currentUser]);
-
   const tagLabelStyle = {
     marginRight: "8px",
   };

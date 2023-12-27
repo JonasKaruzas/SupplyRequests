@@ -27,8 +27,6 @@ const RequestFormPeoplePicker: React.FC<IRequestFormPeoplePickerProps> = (
     props.onManagerChange(items);
   };
 
-  console.log(props.assignedManager);
-
   return spContext ? (
     <PeoplePicker
       context={spContext}
