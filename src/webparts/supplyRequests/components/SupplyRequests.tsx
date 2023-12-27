@@ -21,7 +21,7 @@ import { IListItem } from "./interfaces/IListItem";
 import Services from "./services/Services";
 import FormPanel from "./FormPanel";
 import { IGlobalContext } from "./interfaces/IGlobalContext";
-import TestComponent from "./TestComponent";
+
 import { IFormState } from "./interfaces/IFormState";
 
 export const GlobalContext = createContext<IGlobalContext | undefined>(
@@ -42,7 +42,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   const [globalContext, setGlobalContext] = useState<IGlobalContext>({
     SpContext: context,
     SelectedListItemContext: null,
-    RequestsTypesContext: null,
+    RequestsTypesContext: undefined,
     RequestsStatusesContext: null,
     RequestsAreaOptionsContext: undefined,
     CurrentUserContext: null,
@@ -60,6 +60,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
           IsUserAManagerContext: await services.getIsUserAManager(),
           AllUsersContext: await services.getAllUsers(),
           RequestsAreaOptionsContext: await services.getAreaOptions(),
+          RequestsTypesContext: await services.getTypesItems(),
         });
       } catch (error) {
         console.error(error);
@@ -114,7 +115,6 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
           showFormPanel={showFormPanel}
         />
         <RequestList list={requestsList} onSelect={selectItem} />
-        <TestComponent />
         <div>
           Is user a manager? -{" "}
           {globalContext.IsUserAManagerContext ? "true" : "false"}

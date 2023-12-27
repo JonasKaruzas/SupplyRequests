@@ -16,7 +16,7 @@ import {
 
 import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
 import RequestFormRequestArea from "./RequestFormRequestArea";
-// import RequestFormRequestType from "./RequestFormRequestType";
+import RequestFormRequestType from "./RequestFormRequestType";
 // import RequestFormTagPicker from "./RequestFormTagPicker";
 import { GlobalContext } from "./SupplyRequests";
 
@@ -101,14 +101,14 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     });
   };
 
-  // const onTypeChange = (item: IDropdownOption): void => {
-  //   if (typeof item.key === "string") return;
+  const onTypeChange = (item: IDropdownOption): void => {
+    if (typeof item.key === "string") return;
 
-  //   setFormData({
-  //     ...formData,
-  //     RequestTypeId: item.key,
-  //   });
-  // };
+    setFormData({
+      ...formData,
+      RequestTypeId: item.key,
+    });
+  };
 
   const onSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
@@ -178,15 +178,15 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
           </>
         )}
 
+        <RequestFormRequestType
+          selectedTypeId={formData.RequestTypeId}
+          onTypeChange={onTypeChange}
+        />
         <RequestFormRequestArea
           selectedOption={formData.RequestArea}
           onOptionChange={onOptionChange}
         />
-        {/* <RequestFormRequestType
-          selectedTypeId={formData.RequestTypeId}
-          onTypeChange={onTypeChange}
-        />
-        <RequestFormTagPicker /> */}
+        {/* <RequestFormTagPicker /> */}
 
         <DefaultButton primary type="submit">
           {selectedListItem ? "Update" : "Save"}

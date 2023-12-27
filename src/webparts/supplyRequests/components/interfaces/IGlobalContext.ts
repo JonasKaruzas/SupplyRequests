@@ -10,12 +10,11 @@ import { ITag } from "@fluentui/react";
 export interface IGlobalContext {
   SpContext: WebPartContext | null;
   SelectedListItemContext: IListItem | null;
-  RequestsTypesContext: IRequestTypeListItem[] | null;
+  RequestsTypesContext: IRequestTypeListItem[] | undefined;
   RequestsStatusesContext: IRequestStatusListItem[] | null;
   RequestsAreaOptionsContext: IRequestAreaOptions[] | undefined;
   CurrentUserContext: ICurrentUser | null;
   AllUsersContext: ICurrentUser[] | undefined;
   IsUserAManagerContext: Promise<boolean> | boolean;
   AvailableTagsContext: ITag[] | [];
-  // setGlobalContext: React.Dispatch<React.SetStateAction<IGlobalContext>>;
 }
