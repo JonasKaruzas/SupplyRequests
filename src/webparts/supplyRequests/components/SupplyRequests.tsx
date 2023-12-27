@@ -18,31 +18,15 @@ import { SPFx, spfi } from "@pnp/sp";
 
 import type { ISupplyRequestsProps } from "./interfaces/ISupplyRequestsProps";
 import { IListItem } from "./interfaces/IListItem";
-import { IRequestStatusListItem } from "./interfaces/IRequestStatusListItem";
-import { IRequestTypeListItem } from "./interfaces/IRequestTypeListItem";
-
-import { WebPartContext } from "@microsoft/sp-webpart-base";
-
-import { IRequestAreaOptions } from "./interfaces/IRequestAreaOptions";
-import { ITag } from "@fluentui/react";
 import Services from "./services/Services";
-import { ICurrentUser } from "./interfaces/ICurrentUser";
+import FormPanel from "./FormPanel";
+import { IGlobalContext } from "./interfaces/IGlobalContext";
+import TestComponent from "./TestComponent";
+import { IFormState } from "./interfaces/IFormState";
 
-export const SpContext = createContext<WebPartContext | null>(null);
-export const SelectedListItemContext = createContext<IListItem | null>(null);
-export const RequestsTypesContext = createContext<
-  IRequestTypeListItem[] | null
->(null);
-export const RequestsStatusesContext = createContext<
-  IRequestStatusListItem[] | null
->(null);
-export const RequestsAreaOptionsContext = createContext<
-  IRequestAreaOptions[] | null
->(null);
-export const CurrentUserContext = createContext<ICurrentUser | null>(null);
-export const AllUsersContext = createContext<ICurrentUser[]>([]);
-export const IsUserAManagerContext = createContext<boolean>(false);
-export const AvailableTagsContext = createContext<ITag[] | []>([]);
+export const GlobalContext = createContext<IGlobalContext | undefined>(
+  undefined,
+);
 
 const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   props: ISupplyRequestsProps,
@@ -53,30 +37,32 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   const services = new Services(sp);
 
   const [requestsList, setRequestsList] = useState<IListItem[] | undefined>();
-  const [selectedListItem, setSelectedListItem] = useState<IListItem | null>(
-    null,
-  );
+  const [formPanelVisible, setFormPanelVisible] = useState<boolean>(false);
 
-  // const [requestsStatusesList, setRequestsStatusesList] =
-  //   useState<IRequestStatusListItem[]>();
-  // const [requestsTypesList, setRequestsTypesList] =
-  //   useState<IRequestTypeListItem[]>();
-  // const [currentUser, setCurrentUser] = useState<ICurrentUser | undefined>(
-  //   undefined,
-  // );
-  // const [allUsers, setAllUsers] = useState<ICurrentUser[] | undefined>(
-  //   undefined,
-  // );
-  // const [isUserAManager, setIsUserAManager] = useState<boolean>(false);
-  // const [areaOptions, setAreaOptions] = useState<
-  //   IRequestAreaOptions[] | undefined
-  // >(undefined);
-  // const [availableTags, setAvailableTags] = useState<IAvailableTags[] | []>([]);
+  const [globalContext, setGlobalContext] = useState<IGlobalContext>({
+    SpContext: context,
+    SelectedListItemContext: null,
+    RequestsTypesContext: null,
+    RequestsStatusesContext: null,
+    RequestsAreaOptionsContext: null,
+    CurrentUserContext: null,
+    AllUsersContext: undefined,
+    IsUserAManagerContext: false,
+    AvailableTagsContext: [],
+  });
 
   useEffect(() => {
     const getData = async (): Promise<void> => {
       try {
         setRequestsList(await services.getListItems());
+        setGlobalContext({
+          ...globalContext,
+          IsUserAManagerContext: await services.getIsUserAManager(),
+        });
+        setGlobalContext({
+          ...globalContext,
+          AllUsersContext: await services.getAllUsers(),
+        });
       } catch (error) {
         console.error(error);
       }
@@ -85,37 +71,59 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     getData().catch((error) => console.error(error));
   }, []);
 
-  console.log(requestsList);
-
   const selectItem = (id: number): void => {
     if (!requestsList) return;
-
-    setSelectedListItem(services.selectItemFromList(id, requestsList));
+    setGlobalContext({
+      ...globalContext,
+      SelectedListItemContext: services.selectItemFromList(id, requestsList),
+    });
+    setFormPanelVisible(true);
   };
 
-  console.log(selectedListItem);
+  const hideFormPanel = (): void => {
+    setFormPanelVisible(false);
+    setGlobalContext({ ...globalContext, SelectedListItemContext: null });
+  };
 
-  // const [formPanelVisible, setFormPanelVisible] = useState<boolean>(false);
+  const showFormPanel = (): void => {
+    setFormPanelVisible(true);
+  };
 
-  // const hideFormPanel = (): void => {
-  //   setFormPanelVisible(false);
-  //   setSelectedListItem(null);
-  // };
+  const onAddItem = async (formData: IFormState): Promise<void> => {
+    await services.addItem(formData);
+    setRequestsList(await services.getListItems());
+  };
 
-  // const showFormPanel = (): void => {
-  //   setFormPanelVisible(true);
-  // };
+  const onDeleteItem = async (id: number): Promise<void> => {
+    await services.deleteItem(id);
+    setRequestsList(await services.getListItems());
+  };
 
-  // useEffect(() => {
-  //   if (selectedListItem) {
-  //     setFormPanelVisible(true);
-  //   }
-  // }, [selectItem]);
+  const onUpdateItem = async (formData: IFormState): Promise<void> => {
+    await services.updateItem(formData);
+    setRequestsList(await services.getListItems());
+  };
+
+  console.log(globalContext.IsUserAManagerContext);
 
   return (
     <>
-      <RequestList list={requestsList} onSelect={selectItem} />
-      <div>{selectedListItem}</div>
+      <GlobalContext.Provider value={globalContext}>
+        <FormPanel
+          onAddItem={(formData: IFormState) => onAddItem(formData)}
+          onDelete={(id: number) => onDeleteItem(id)}
+          onUpdateItem={(formData: IFormState) => onUpdateItem(formData)}
+          formPanelVisible={formPanelVisible}
+          hideFormPanel={hideFormPanel}
+          showFormPanel={showFormPanel}
+        />
+        <RequestList list={requestsList} onSelect={selectItem} />
+        <TestComponent />
+        <div>
+          Is user a manager? -{" "}
+          {globalContext.IsUserAManagerContext ? "true" : "false"}
+        </div>
+      </GlobalContext.Provider>
     </>
   );
 };

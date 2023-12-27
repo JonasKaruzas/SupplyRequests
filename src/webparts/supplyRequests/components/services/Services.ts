@@ -21,7 +21,7 @@ import { IFieldInfo } from "@pnp/sp/fields/types";
 import { IRequestAreaOptions } from "../interfaces/IRequestAreaOptions";
 import { ITermInfo } from "@pnp/sp/taxonomy";
 import { IAvailableTags } from "../interfaces/IAvailableTags";
-import { IFormState } from "../RequestForm";
+import { IFormState } from "../interfaces/IFormState";
 
 class Services {
   private sp: SPFI;
@@ -155,14 +155,20 @@ class Services {
 
       const group = userGroups.filter(
         (item) => item.Id === UserGroups["SupplyDepartment Managers"],
-      )[0];
+      );
+      console.log(group);
 
-      if (group) {
+      console.log("1");
+      if (group && group.length > 0) {
+        console.log("2");
+        debugger;
         return true;
       }
+      console.log("3");
 
       return false;
     } catch (error) {
+      console.log("4");
       console.error(error);
       return false;
     }

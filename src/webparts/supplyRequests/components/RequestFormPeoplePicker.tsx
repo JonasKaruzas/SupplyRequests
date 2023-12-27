@@ -5,16 +5,17 @@ import {
   PrincipalType,
 } from "@pnp/spfx-controls-react/lib/PeoplePicker";
 import { UserGroups } from "./enums/UserGroups";
-import { SpContext } from "./SupplyRequests";
 import { IPersonaProps } from "@fluentui/react";
 import { IRequestFormPeoplePickerProps } from "./interfaces/IRequestFormPeoplePickerProps";
-import { AllUsersContext } from "./SupplyRequests";
+
+import { GlobalContext } from "./SupplyRequests";
 
 const RequestFormPeoplePicker: React.FC<IRequestFormPeoplePickerProps> = (
   props: IRequestFormPeoplePickerProps,
 ) => {
-  const spContext = useContext(SpContext);
-  const allUsers = useContext(AllUsersContext);
+  const globalContext = useContext(GlobalContext);
+  const spContext = globalContext?.SpContext;
+  const allUsers = globalContext?.AllUsersContext || [];
 
   const findUserName = (id: number | null): string => {
     if (id === undefined || id === undefined) return "";
@@ -33,6 +34,8 @@ const RequestFormPeoplePicker: React.FC<IRequestFormPeoplePickerProps> = (
   const onPeoplePickerChange = (items: IPersonaProps[]): void => {
     props.onManagerChange(items);
   };
+
+  console.log(props.assignedManager);
 
   return spContext ? (
     <PeoplePicker

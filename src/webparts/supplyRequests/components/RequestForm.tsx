@@ -1,8 +1,6 @@
 import * as React from "react";
 import { useState, useContext } from "react";
 
-import { SelectedListItemContext } from "./SupplyRequests";
-
 import { Label } from "@fluentui/react/lib/Label";
 import { TextField } from "@fluentui/react/lib/TextField";
 import { IRequestForm } from "./interfaces/IRequestForm";
@@ -10,49 +8,39 @@ import { DefaultButton } from "@fluentui/react/lib/Button";
 
 import {
   DatePicker,
-  IDropdownOption,
+  defaultDatePickerStrings,
+  // IDropdownOption,
   IPersonaProps,
-  ITag,
+  // ITag,
 } from "@fluentui/react";
 
-import { CurrentUserContext } from "./SupplyRequests";
 import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
-import RequestFormRequestArea from "./RequestFormRequestArea";
-import RequestFormRequestType from "./RequestFormRequestType";
-import RequestFormTagPicker from "./RequestFormTagPicker";
+// import RequestFormRequestArea from "./RequestFormRequestArea";
+// import RequestFormRequestType from "./RequestFormRequestType";
+// import RequestFormTagPicker from "./RequestFormTagPicker";
+import { GlobalContext } from "./SupplyRequests";
 
-export interface IFormState {
-  // eslint-disable-next-line @rushstack/no-new-null
-  Id: number | null;
-  AuthorId: number;
-  Title: string;
-  Description: string;
-  // eslint-disable-next-line @rushstack/no-new-null
-  RequestTypeId: number | null;
-  // eslint-disable-next-line @rushstack/no-new-null
-  RequestArea: string | null;
-  DueDate: Date | undefined;
-  StatusId: number;
-  // eslint-disable-next-line @rushstack/no-new-null
-  AssignedManagerId: number | null;
-  Tags: ITag[];
-}
+import { IFormState } from "./interfaces/IFormState";
+import { StatusType } from "./enums/StatusType";
 
 const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
-  const currentUser = useContext(CurrentUserContext);
-  const selectedListItem = useContext(SelectedListItemContext);
+  const globalContext = useContext(GlobalContext);
+
+  const currentUser = globalContext?.CurrentUserContext;
+  const selectedListItem = globalContext?.SelectedListItemContext;
+  const IsUserAManager = globalContext?.IsUserAManagerContext;
 
   const defaultFormState = {
-    Id: null,
+    Id: undefined,
     AuthorId: currentUser?.Id ?? 0,
     Title: "",
     Description: "",
     RequestTypeId: null,
     RequestArea: null,
     DueDate: undefined,
-    StatusId: 1,
+    StatusId: StatusType.New,
     AssignedManagerId: null,
-    Tags: [],
+    // Tags: [],
   };
 
   const initialFormDataState = (): IFormState => {
@@ -70,23 +58,22 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
       DueDate: new Date(selectedListItem.DueDate),
       StatusId: selectedListItem.StatusId,
       AssignedManagerId: selectedListItem.AssignedManagerId,
-      Tags: selectedListItem.Tags,
+      // Tags: selectedListItem.Tags,
     };
   };
 
   const [formData, setFormData] = useState(initialFormDataState);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    console.log(formData);
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const onDateChange = (date: Date | undefined): void => {
-    console.log(formData);
+    if (!date) return;
 
-    if (date === undefined) return;
-    setFormData({ ...formData, DueDate: date });
+    const formattedDate = new Date(date.setHours(date.getHours() + 2));
+    setFormData({ ...formData, DueDate: formattedDate });
   };
 
   const onManagerChange = (persons: IPersonaProps[]): void => {
@@ -104,24 +91,24 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     }
   };
 
-  const onOptionChange = (
-    event: React.FormEvent<HTMLDivElement>,
-    item: IDropdownOption,
-  ): void => {
-    setFormData({
-      ...formData,
-      RequestArea: item.text,
-    });
-  };
+  // const onOptionChange = (
+  //   event: React.FormEvent<HTMLDivElement>,
+  //   item: IDropdownOption,
+  // ): void => {
+  //   setFormData({
+  //     ...formData,
+  //     RequestArea: item.text,
+  //   });
+  // };
 
-  const onTypeChange = (item: IDropdownOption): void => {
-    if (typeof item.key === "string") return;
+  // const onTypeChange = (item: IDropdownOption): void => {
+  //   if (typeof item.key === "string") return;
 
-    setFormData({
-      ...formData,
-      RequestTypeId: item.key,
-    });
-  };
+  //   setFormData({
+  //     ...formData,
+  //     RequestTypeId: item.key,
+  //   });
+  // };
 
   const onSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
@@ -132,6 +119,16 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     }
   };
 
+  const onSendToDeliveryDepartment = async (
+    e: React.FormEvent<HTMLDivElement>,
+  ): Promise<void> => {
+    e.preventDefault();
+    await props.onUpdateItem({
+      ...formData,
+      StatusId: StatusType["In Progress"],
+    });
+  };
+
   const onDelete = async (id: number): Promise<void> => {
     await props.onDelete(id);
   };
@@ -139,39 +136,49 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   return (
     <>
       <form onSubmit={onSubmit}>
-        <Label htmlFor="titleFieldId">Title:</Label>
-        <TextField
-          id="titleFieldId"
-          name="Title"
-          value={formData.Title}
-          onChange={onChange}
-          required
-        />
-        <Label htmlFor="descriptionFieldId">Description:</Label>
-        <TextField
-          id="descriptionFieldId"
-          name="Description"
-          value={formData.Description}
-          onChange={onChange}
-          required
-        />
-        <DatePicker
-          placeholder="Select a DueDate"
-          label="DueDate"
-          value={formData.DueDate}
-          onSelectDate={(e) => {
-            if (e === null) {
-              onDateChange(undefined);
-            } else {
-              onDateChange(e);
-            }
-          }}
-        />
-        <RequestFormPeoplePicker
-          assignedManager={formData.AssignedManagerId}
-          onManagerChange={onManagerChange}
-        />
-        <RequestFormRequestArea
+        {!IsUserAManager ? (
+          <>
+            <Label htmlFor="titleFieldId">Title:</Label>
+            <TextField
+              id="titleFieldId"
+              name="Title"
+              value={formData.Title}
+              onChange={onChange}
+              required
+            />
+            <Label htmlFor="descriptionFieldId">Description:</Label>
+            <TextField
+              id="descriptionFieldId"
+              name="Description"
+              value={formData.Description}
+              onChange={onChange}
+              required
+            />
+            <DatePicker
+              placeholder="Select a DueDate"
+              label="DueDate"
+              value={formData.DueDate}
+              onSelectDate={(e) => {
+                if (e === null) {
+                  onDateChange(undefined);
+                } else {
+                  onDateChange(e);
+                }
+              }}
+              isRequired
+              strings={defaultDatePickerStrings}
+            />
+          </>
+        ) : (
+          <>
+            <RequestFormPeoplePicker
+              assignedManager={formData.AssignedManagerId}
+              onManagerChange={onManagerChange}
+            />
+          </>
+        )}
+
+        {/*<RequestFormRequestArea
           selectedOption={formData.RequestArea}
           onOptionChange={onOptionChange}
         />
@@ -179,11 +186,23 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
           selectedTypeId={formData.RequestTypeId}
           onTypeChange={onTypeChange}
         />
-        <RequestFormTagPicker />
+        <RequestFormTagPicker /> */}
 
         <DefaultButton primary type="submit">
           {selectedListItem ? "Update" : "Save"}
         </DefaultButton>
+
+        {selectedListItem && IsUserAManager ? (
+          <DefaultButton
+            type="button"
+            onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
+              onSendToDeliveryDepartment(e)
+            }
+          >
+            Update and Send
+          </DefaultButton>
+        ) : null}
+
         {selectedListItem ? (
           <DefaultButton
             type="button"

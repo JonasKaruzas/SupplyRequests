@@ -1,79 +1,80 @@
-import * as React from "react";
-import { useContext } from "react";
+// import * as React from "react";
+// import { useContext } from "react";
 
-import {
-  TagPicker,
-  ITag,
-  IInputProps,
-  IBasePickerSuggestionsProps,
-} from "@fluentui/react/lib/Pickers";
-import { mergeStyles } from "@fluentui/react/lib/Styling";
+// import {
+//   TagPicker,
+//   ITag,
+//   IInputProps,
+//   IBasePickerSuggestionsProps,
+// } from "@fluentui/react/lib/Pickers";
+// import { mergeStyles } from "@fluentui/react/lib/Styling";
 
-import { SelectedListItemContext } from "./SupplyRequests";
-import { AvailableTagsContext } from "./SupplyRequests";
+// import { GlobalContext } from "./SupplyRequests";
 
-const rootClass = mergeStyles({
-  maxWidth: 500,
-});
+// const rootClass = mergeStyles({
+//   maxWidth: 500,
+// });
 
-const inputProps: IInputProps = {
-  onBlur: (ev: React.FocusEvent<HTMLInputElement>) =>
-    console.log("onBlur called"),
-  onFocus: (ev: React.FocusEvent<HTMLInputElement>) =>
-    console.log("onFocus called"),
-};
+// const inputProps: IInputProps = {
+//   onBlur: (ev: React.FocusEvent<HTMLInputElement>) =>
+//     console.log("onBlur called"),
+//   onFocus: (ev: React.FocusEvent<HTMLInputElement>) =>
+//     console.log("onFocus called"),
+// };
 
-const pickerSuggestionsProps: IBasePickerSuggestionsProps = {
-  suggestionsHeaderText: "Suggested tags",
-  noResultsFoundText: "No color tags found",
-};
+// const pickerSuggestionsProps: IBasePickerSuggestionsProps = {
+//   suggestionsHeaderText: "Suggested tags",
+//   noResultsFoundText: "No color tags found",
+// };
 
-const defaultSelected: ITag[] = ["rose", "red"].map((item) => ({
-  key: item,
-  name: item,
-}));
-const getTextFromItem = (item: ITag) => item.name;
+// const defaultSelected: ITag[] = ["rose", "red"].map((item) => ({
+//   key: item,
+//   name: item,
+// }));
+// const getTextFromItem = (item: ITag) => item.name;
 
-const RequestFormTagPicker: React.FC = () => {
-  const availableTags = useContext(AvailableTagsContext);
-  const selectedItem = useContext(SelectedListItemContext);
+// const RequestFormTagPicker: React.FC = () => {
+//   const globalContext = useContext(GlobalContext);
 
-  console.log(selectedItem);
+//   const availableTags = globalContext?.AvailableTagsContext ?? [];
+//   const selectedItem = globalContext?.SelectedListItemContext;
 
-  const listContainsTagList = (tag: ITag, tagList?: ITag[]): boolean => {
-    if (!tagList || !tagList.length || tagList.length === 0) {
-      return false;
-    }
-    return tagList.some((compareTag) => compareTag.key === tag.key);
-  };
+//   console.log(selectedItem);
 
-  const filterSuggestedTags = (filterText: string, tagList: ITag[]): ITag[] => {
-    return filterText
-      ? availableTags.filter(
-          (tag) =>
-            tag.name.toLowerCase().indexOf(filterText.toLowerCase()) === 0 &&
-            !listContainsTagList(tag, tagList),
-        )
-      : [];
-  };
+//   const listContainsTagList = (tag: ITag, tagList?: ITag[]): boolean => {
+//     if (!tagList || !tagList.length || tagList.length === 0) {
+//       return false;
+//     }
+//     return tagList.some((compareTag) => compareTag.key === tag.key);
+//   };
 
-  return (
-    <div className={rootClass}>
-      <label htmlFor="picker1">Tags</label>
-      <TagPicker
-        defaultSelectedItems={defaultSelected}
-        removeButtonAriaLabel="Remove"
-        selectionAriaLabel="Selected colors"
-        onResolveSuggestions={filterSuggestedTags}
-        getTextFromItem={getTextFromItem}
-        pickerSuggestionsProps={pickerSuggestionsProps}
-        inputProps={{
-          ...inputProps,
-          id: "picker1",
-        }}
-      />
-    </div>
-  );
-};
+//   const filterSuggestedTags = (filterText: string, tagList: ITag[]): ITag[] => {
+//     return filterText
+//       ? availableTags.filter(
+//           (tag) =>
+//             tag.name.toLowerCase().indexOf(filterText.toLowerCase()) === 0 &&
+//             !listContainsTagList(tag, tagList),
+//         )
+//       : [];
+//   };
 
-export default RequestFormTagPicker;
+//   return (
+//     <div className={rootClass}>
+//       <label htmlFor="picker1">Tags</label>
+//       <TagPicker
+//         defaultSelectedItems={defaultSelected}
+//         removeButtonAriaLabel="Remove"
+//         selectionAriaLabel="Selected colors"
+//         onResolveSuggestions={filterSuggestedTags}
+//         getTextFromItem={getTextFromItem}
+//         pickerSuggestionsProps={pickerSuggestionsProps}
+//         inputProps={{
+//           ...inputProps,
+//           id: "picker1",
+//         }}
+//       />
+//     </div>
+//   );
+// };
+
+// export default RequestFormTagPicker;
