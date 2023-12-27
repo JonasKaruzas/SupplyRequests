@@ -156,19 +156,13 @@ class Services {
       const group = userGroups.filter(
         (item) => item.Id === UserGroups["SupplyDepartment Managers"],
       );
-      console.log(group);
 
-      console.log("1");
       if (group && group.length > 0) {
-        console.log("2");
-        debugger;
         return true;
       }
-      console.log("3");
 
       return false;
     } catch (error) {
-      console.log("4");
       console.error(error);
       return false;
     }
@@ -185,6 +179,8 @@ class Services {
       if (fields.Choices === undefined) {
         return undefined;
       } else {
+        const emptyOption = [{ key: "emptyOption", text: "" }];
+
         const optionsArray: IRequestAreaOptions[] = fields.Choices.map(
           (item) => ({
             key: item,
@@ -192,7 +188,7 @@ class Services {
           }),
         );
 
-        return optionsArray;
+        return emptyOption.concat(optionsArray);
       }
     } catch (error) {
       console.error(error);

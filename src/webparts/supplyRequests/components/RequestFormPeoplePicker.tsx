@@ -18,17 +18,9 @@ const RequestFormPeoplePicker: React.FC<IRequestFormPeoplePickerProps> = (
   const allUsers = globalContext?.AllUsersContext || [];
 
   const findUserName = (id: number | null): string => {
-    if (id === undefined || id === undefined) return "";
+    if (id === undefined || id === null) return "";
 
-    let res = "";
-
-    for (let i = 0; i < allUsers.length; i++) {
-      if (allUsers[i].Id === id) {
-        res = allUsers[i].Title;
-        break;
-      }
-    }
-    return res;
+    return allUsers.filter((item) => item.Id === id)[0].Title ?? "";
   };
 
   const onPeoplePickerChange = (items: IPersonaProps[]): void => {
@@ -48,7 +40,7 @@ const RequestFormPeoplePicker: React.FC<IRequestFormPeoplePickerProps> = (
       onChange={onPeoplePickerChange}
       ensureUser={true}
       principalTypes={[PrincipalType.User]}
-      resolveDelay={1000}
+      resolveDelay={500}
       required
       defaultSelectedUsers={[findUserName(props.assignedManager)]}
     />

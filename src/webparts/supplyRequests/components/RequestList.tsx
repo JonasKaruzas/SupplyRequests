@@ -80,12 +80,23 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
       minWidth: 100,
       fieldName: "UserFullName",
     },
-    { key: "column3", name: "Due Date", minWidth: 100, fieldName: "DueDate" },
+    {
+      key: "column3",
+      name: "Due Date",
+      minWidth: 100,
+      fieldName: "DueDate",
+      onRender: (item: IListItem) => {
+        return new Date(item.DueDate).toISOString().split("T")[0];
+      },
+    },
     {
       key: "column3B",
       name: "Execution Date",
       minWidth: 100,
       fieldName: "ExecutionDate",
+      onRender: (item: IListItem) => {
+        return new Date(item.ExecutionDate).toISOString().split("T")[0];
+      },
     },
     {
       key: "column4",

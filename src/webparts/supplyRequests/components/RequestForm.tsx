@@ -9,13 +9,13 @@ import { DefaultButton } from "@fluentui/react/lib/Button";
 import {
   DatePicker,
   defaultDatePickerStrings,
-  // IDropdownOption,
+  IDropdownOption,
   IPersonaProps,
   // ITag,
 } from "@fluentui/react";
 
 import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
-// import RequestFormRequestArea from "./RequestFormRequestArea";
+import RequestFormRequestArea from "./RequestFormRequestArea";
 // import RequestFormRequestType from "./RequestFormRequestType";
 // import RequestFormTagPicker from "./RequestFormTagPicker";
 import { GlobalContext } from "./SupplyRequests";
@@ -91,15 +91,15 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     }
   };
 
-  // const onOptionChange = (
-  //   event: React.FormEvent<HTMLDivElement>,
-  //   item: IDropdownOption,
-  // ): void => {
-  //   setFormData({
-  //     ...formData,
-  //     RequestArea: item.text,
-  //   });
-  // };
+  const onOptionChange = (
+    event: React.FormEvent<HTMLDivElement>,
+    item: IDropdownOption,
+  ): void => {
+    setFormData({
+      ...formData,
+      RequestArea: item.text,
+    });
+  };
 
   // const onTypeChange = (item: IDropdownOption): void => {
   //   if (typeof item.key === "string") return;
@@ -178,11 +178,11 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
           </>
         )}
 
-        {/*<RequestFormRequestArea
+        <RequestFormRequestArea
           selectedOption={formData.RequestArea}
           onOptionChange={onOptionChange}
         />
-        <RequestFormRequestType
+        {/* <RequestFormRequestType
           selectedTypeId={formData.RequestTypeId}
           onTypeChange={onTypeChange}
         />

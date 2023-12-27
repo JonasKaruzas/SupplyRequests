@@ -44,7 +44,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     SelectedListItemContext: null,
     RequestsTypesContext: null,
     RequestsStatusesContext: null,
-    RequestsAreaOptionsContext: null,
+    RequestsAreaOptionsContext: undefined,
     CurrentUserContext: null,
     AllUsersContext: undefined,
     IsUserAManagerContext: false,
@@ -58,10 +58,8 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
         setGlobalContext({
           ...globalContext,
           IsUserAManagerContext: await services.getIsUserAManager(),
-        });
-        setGlobalContext({
-          ...globalContext,
           AllUsersContext: await services.getAllUsers(),
+          RequestsAreaOptionsContext: await services.getAreaOptions(),
         });
       } catch (error) {
         console.error(error);
@@ -103,8 +101,6 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     await services.updateItem(formData);
     setRequestsList(await services.getListItems());
   };
-
-  console.log(globalContext.IsUserAManagerContext);
 
   return (
     <>
