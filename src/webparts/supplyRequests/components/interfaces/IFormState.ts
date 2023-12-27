@@ -14,5 +14,5 @@ export interface IFormState {
   StatusId: number;
   // eslint-disable-next-line @rushstack/no-new-null
   AssignedManagerId: number | null;
-  // Tags: ITag[];
+  // Tags: ITag[] | string;
 }

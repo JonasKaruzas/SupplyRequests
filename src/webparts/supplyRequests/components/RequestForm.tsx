@@ -17,7 +17,7 @@ import {
 import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
 import RequestFormRequestArea from "./RequestFormRequestArea";
 import RequestFormRequestType from "./RequestFormRequestType";
-// import RequestFormTagPicker from "./RequestFormTagPicker";
+import RequestFormTagPicker from "./RequestFormTagPicker";
 import { GlobalContext } from "./SupplyRequests";
 
 import { IFormState } from "./interfaces/IFormState";
@@ -40,7 +40,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     DueDate: undefined,
     StatusId: StatusType.New,
     AssignedManagerId: null,
-    // Tags: [],
+    // Tags: "",
   };
 
   const initialFormDataState = (): IFormState => {
@@ -63,6 +63,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   };
 
   const [formData, setFormData] = useState(initialFormDataState);
+  const [tags, setTags] = useState("");
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -110,12 +111,26 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     });
   };
 
-  const onSubmit = async (e: React.FormEvent): Promise<void> => {
+  const onTagChange = (tagsIds: string[]): void => {
+    const joined = tagsIds.map((item) => "-1;#null|" + item).join(";#");
+    setTags(joined);
+  };
+
+  const onSubmit = async (e: React.FormEvent): Promise<number | undefined> => {
     e.preventDefault();
     if (selectedListItem) {
       await props.onUpdateItem({ ...formData });
+      if (!globalContext) return;
+      if (!formData.Id) return;
+      await globalContext.updateListItemTags(formData.Id, tags);
     } else {
-      await props.onAddItem(formData);
+      const newId = await props.onAddItem(formData);
+
+      if (newId) {
+        if (!globalContext) return;
+        await globalContext.updateListItemTags(newId, tags);
+        return newId;
+      }
     }
   };
 
@@ -186,7 +201,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
           selectedOption={formData.RequestArea}
           onOptionChange={onOptionChange}
         />
-        {/* <RequestFormTagPicker /> */}
+        <RequestFormTagPicker onTagsChange={onTagChange} />
 
         <DefaultButton primary type="submit">
           {selectedListItem ? "Update" : "Save"}

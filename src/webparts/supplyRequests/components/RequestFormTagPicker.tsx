@@ -1,80 +1,42 @@
-// import * as React from "react";
-// import { useContext } from "react";
+import * as React from "react";
+import { useContext } from "react";
+import { GlobalContext } from "./SupplyRequests";
+import { ModernTaxonomyPicker } from "@pnp/spfx-controls-react/lib/ModernTaxonomyPicker";
+import { TERM_SET_ID } from "./config/config";
+import { ITermInfo } from "@pnp/spfx-controls-react/node_modules/@pnp/sp/taxonomy/";
+import { RequestFormTagPickerProps } from "./interfaces/RequestFormTagPickerProps";
 
-// import {
-//   TagPicker,
-//   ITag,
-//   IInputProps,
-//   IBasePickerSuggestionsProps,
-// } from "@fluentui/react/lib/Pickers";
-// import { mergeStyles } from "@fluentui/react/lib/Styling";
+const RequestFormTagPicker: React.FC<RequestFormTagPickerProps> = (
+  props: RequestFormTagPickerProps,
+) => {
+  const globalContext = useContext(GlobalContext);
 
-// import { GlobalContext } from "./SupplyRequests";
+  const spContext = globalContext?.SpContext;
+  const selectedItem = globalContext?.SelectedListItemContext;
 
-// const rootClass = mergeStyles({
-//   maxWidth: 500,
-// });
+  const initialValues = selectedItem?.Tags.map((item) => ({
+    labels: [{ name: item.Label, isDefault: true, languageTag: "en-US" }],
+    id: item.TermGuid,
+  }));
 
-// const inputProps: IInputProps = {
-//   onBlur: (ev: React.FocusEvent<HTMLInputElement>) =>
-//     console.log("onBlur called"),
-//   onFocus: (ev: React.FocusEvent<HTMLInputElement>) =>
-//     console.log("onFocus called"),
-// };
+  const onChange = (terms: ITermInfo[]): void => {
+    const tagsIds: string[] = terms.map((item) => item.id);
+    props.onTagsChange(tagsIds);
+  };
 
-// const pickerSuggestionsProps: IBasePickerSuggestionsProps = {
-//   suggestionsHeaderText: "Suggested tags",
-//   noResultsFoundText: "No color tags found",
-// };
+  return (
+    <>
+      <ModernTaxonomyPicker
+        allowMultipleSelections={true}
+        termSetId={TERM_SET_ID}
+        panelTitle="Select Term"
+        label="Taxonomy Picker"
+        context={spContext}
+        onChange={onChange}
+        initialValues={initialValues}
+      />
+    </>
+  );
+};
 
-// const defaultSelected: ITag[] = ["rose", "red"].map((item) => ({
-//   key: item,
-//   name: item,
-// }));
-// const getTextFromItem = (item: ITag) => item.name;
-
-// const RequestFormTagPicker: React.FC = () => {
-//   const globalContext = useContext(GlobalContext);
-
-//   const availableTags = globalContext?.AvailableTagsContext ?? [];
-//   const selectedItem = globalContext?.SelectedListItemContext;
-
-//   console.log(selectedItem);
-
-//   const listContainsTagList = (tag: ITag, tagList?: ITag[]): boolean => {
-//     if (!tagList || !tagList.length || tagList.length === 0) {
-//       return false;
-//     }
-//     return tagList.some((compareTag) => compareTag.key === tag.key);
-//   };
-
-//   const filterSuggestedTags = (filterText: string, tagList: ITag[]): ITag[] => {
-//     return filterText
-//       ? availableTags.filter(
-//           (tag) =>
-//             tag.name.toLowerCase().indexOf(filterText.toLowerCase()) === 0 &&
-//             !listContainsTagList(tag, tagList),
-//         )
-//       : [];
-//   };
-
-//   return (
-//     <div className={rootClass}>
-//       <label htmlFor="picker1">Tags</label>
-//       <TagPicker
-//         defaultSelectedItems={defaultSelected}
-//         removeButtonAriaLabel="Remove"
-//         selectionAriaLabel="Selected colors"
-//         onResolveSuggestions={filterSuggestedTags}
-//         getTextFromItem={getTextFromItem}
-//         pickerSuggestionsProps={pickerSuggestionsProps}
-//         inputProps={{
-//           ...inputProps,
-//           id: "picker1",
-//         }}
-//       />
-//     </div>
-//   );
-// };
-
-// export default RequestFormTagPicker;
+export default RequestFormTagPicker;

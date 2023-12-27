@@ -4,13 +4,14 @@ import {
   REQUESTS_LIST,
   REQUESTS_REQUEST_AREA_COLUMN,
   REQUESTS_STATUSES_LIST,
-  REQUESTS_TAGS_COLUMN,
+  // REQUESTS_TAGS_COLUMN,
   REQUESTS_TYPES_LIST,
 } from "../config/config";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
 import "@pnp/sp/items";
 import "@pnp/sp/fields";
+import "@pnp/sp/taxonomy";
 import "@pnp/sp/site-users/web";
 
 import { IRequestStatusListItem } from "../interfaces/IRequestStatusListItem";
@@ -19,9 +20,10 @@ import { ICurrentUser } from "../interfaces/ICurrentUser";
 import { UserGroups } from "../enums/UserGroups";
 import { IFieldInfo } from "@pnp/sp/fields/types";
 import { IRequestAreaOptions } from "../interfaces/IRequestAreaOptions";
-import { ITermInfo } from "@pnp/sp/taxonomy";
-import { IAvailableTags } from "../interfaces/IAvailableTags";
+// import { ITermInfo } from "@pnp/sp/taxonomy";
+// import { IAvailableTags } from "../interfaces/IAvailableTags";
 import { IFormState } from "../interfaces/IFormState";
+import { IItemAddResult } from "@pnp/sp/items";
 
 class Services {
   private sp: SPFI;
@@ -196,52 +198,92 @@ class Services {
     }
   };
 
-  public getTags = async (): Promise<IAvailableTags[]> => {
-    try {
-      const field: IFieldInfo & { TermSetId: string } = await this.sp.web.lists
-        .getByTitle(REQUESTS_LIST)
-        .fields.getByTitle(REQUESTS_TAGS_COLUMN)();
+  // public getTags = async (): Promise<IAvailableTags[]> => {
+  //   console.log("1");
 
-      const termSetId = field.TermSetId;
+  //   try {
+  //     const field: IFieldInfo & { TermSetId: string } = await this.sp.web.lists
+  //       .getByTitle(REQUESTS_LIST)
+  //       .fields.getByTitle(REQUESTS_TAGS_COLUMN)();
 
-      const terms: ITermInfo[] = await this.sp.termStore.sets
-        .getById(termSetId)
-        .terms();
+  //     console.log("field");
+  //     console.log(field);
 
-      const availableTags: IAvailableTags[] = terms.map((term) => ({
-        key: term.id,
-        name: term.labels[0].name,
-      }));
+  //     const termSetId = field.TermSetId;
 
-      return availableTags;
-    } catch (error) {
-      console.error(error);
-      return [];
-    }
-  };
+  //           console.log("termSetId");
+  //     console.log(termSetId);
 
-  public updateTags = async (): Promise<void> => {
+  //     const terms2 = await this.sp.termStore.getContextInfo();
+
+  //     console.log("terms2");
+  //     console.log(terms2);
+
+  //     const sets = await this.sp.termStore.sets();
+  //     console.log("sets");
+  //     console.log(sets);
+
+  //     // .getTermSetById(termSetId).terms.get();
+
+  //     const terms: ITermInfo[] = await this.sp.termStore.sets
+  //       .getById(termSetId)
+  //       .terms();
+
+  //     console.log("terms");
+  //     console.log(terms);
+
+  //     const availableTags: IAvailableTags[] = terms.map((term) => ({
+  //       key: term.id,
+  //       name: term.labels[0].name,
+  //     }));
+
+  //     console.log("availableTags");
+  //     console.log(availableTags);
+
+  //     return availableTags;
+  //   } catch (error) {
+  //     console.error(error);
+  //     return [];
+  //   }
+  // };
+
+  public updateTags = async (id: number, tagStrings: string): Promise<void> => {
     // TODO: refactor
+    console.log("updating");
+    console.log("id");
+    console.log(id);
+    console.log("tagStrings");
+    console.log(tagStrings);
 
     const fields = await this.sp.web.lists
       .getByTitle(REQUESTS_LIST)
       .fields.filter("Title eq 'Tags_0'")
       .select("Title", "InternalName")();
 
-    const oldItem = await this.sp.web.lists
+    const item = await this.sp.web.lists
       .getByTitle(REQUESTS_LIST)
-      .items.getById(1);
+      .items.getById(id);
 
     // to do that for each field value you need to serialize each as -1;#{field label}|{field id} joined by ";#"
     const updateVal: { [key: string]: unknown } = {};
-    updateVal[fields[0].InternalName] =
-      "-1;#null|7903d66e-6fb7-4faa-95c4-c9478a6ac149";
+    updateVal[fields[0].InternalName] = tagStrings;
 
-    await oldItem.update(updateVal);
+    await item.update(updateVal);
   };
 
-  public addItem = async (formData: IFormState): Promise<void> => {
-    await this.sp.web.lists.getByTitle(REQUESTS_LIST).items.add(formData);
+  public addItem = async (
+    formData: IFormState,
+  ): Promise<number | undefined> => {
+    const res: IItemAddResult = await this.sp.web.lists
+      .getByTitle(REQUESTS_LIST)
+      .items.add(formData);
+
+    if (res) {
+      const id: number = res.data.Id;
+      return id;
+    }
+
+    return undefined;
   };
 
   public deleteItem = async (id: number): Promise<void> => {

@@ -39,6 +39,11 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   const [requestsList, setRequestsList] = useState<IListItem[] | undefined>();
   const [formPanelVisible, setFormPanelVisible] = useState<boolean>(false);
 
+  const updateTags = async (id: number, tagStrings: string): Promise<void> => {
+    await services.updateTags(id, tagStrings);
+    setRequestsList(await services.getListItems());
+  };
+
   const [globalContext, setGlobalContext] = useState<IGlobalContext>({
     SpContext: context,
     SelectedListItemContext: null,
@@ -48,7 +53,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     CurrentUserContext: null,
     AllUsersContext: undefined,
     IsUserAManagerContext: false,
-    AvailableTagsContext: [],
+    updateListItemTags: updateTags,
   });
 
   useEffect(() => {
@@ -61,6 +66,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
           AllUsersContext: await services.getAllUsers(),
           RequestsAreaOptionsContext: await services.getAreaOptions(),
           RequestsTypesContext: await services.getTypesItems(),
+          // AvailableTagsContext: await services.getTags(),
         });
       } catch (error) {
         console.error(error);
@@ -88,9 +94,17 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     setFormPanelVisible(true);
   };
 
-  const onAddItem = async (formData: IFormState): Promise<void> => {
-    await services.addItem(formData);
+  const onAddItem = async (
+    formData: IFormState,
+  ): Promise<number | undefined> => {
+    const res = await services.addItem(formData);
     setRequestsList(await services.getListItems());
+
+    if (res) {
+      return res;
+    }
+
+    return undefined;
   };
 
   const onDeleteItem = async (id: number): Promise<void> => {

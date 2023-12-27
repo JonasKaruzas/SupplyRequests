@@ -18,9 +18,17 @@ const FormPanel: React.FC<IFormPanel> = (props: IFormPanel) => {
     props.showFormPanel();
   };
 
-  const onSave = async (formData: React.FormEvent): Promise<void> => {
+  const onSave = async (
+    formData: React.FormEvent,
+  ): Promise<number | undefined> => {
     props.hideFormPanel();
-    await props.onAddItem(formData);
+    const res = await props.onAddItem(formData);
+
+    if (res) {
+      return res;
+    }
+
+    return undefined;
   };
 
   const onUpdate = async (formData: React.FormEvent): Promise<void> => {
