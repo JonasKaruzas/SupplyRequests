@@ -1,13 +1,19 @@
-import { DetailsList, IColumn } from "@fluentui/react";
 import * as React from "react";
+import { useContext } from "react";
+import { DetailsList, IColumn } from "@fluentui/react";
 import { IListItem } from "./interfaces/IListItem";
 import { Button } from "@fluentui/react-components";
 
 import { EditRegular } from "@fluentui/react-icons";
 import { StatusType } from "./enums/StatusType";
 import { IRequestListProps } from "./interfaces/IRequestListProps";
+import { GlobalContext } from "./SupplyRequests";
 
 const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
+  const globalContext = useContext(GlobalContext);
+  const currentUserId = globalContext?.CurrentUserContext?.Id;
+  const IsUserAManager = globalContext?.IsUserAManagerContext;
+
   const tagLabelStyle = {
     marginRight: "8px",
   };
@@ -104,6 +110,16 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
     },
   ];
 
+  const list = (): IListItem[] => {
+    if (IsUserAManager) {
+      return props.list ?? [];
+    } else {
+      return (
+        props.list?.filter((item) => item.AuthorId === currentUserId) ?? []
+      );
+    }
+  };
+
   return (
     <>
       <h3>Request List</h3>
@@ -111,7 +127,7 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
       {props.list === undefined ? (
         <p>No list items</p>
       ) : (
-        <DetailsList items={props.list} columns={columns} selectionMode={0} />
+        <DetailsList items={list()} columns={columns} selectionMode={0} />
       )}
     </>
   );

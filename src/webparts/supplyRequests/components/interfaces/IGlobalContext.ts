@@ -12,7 +12,7 @@ export interface IGlobalContext {
   RequestsTypesContext: IRequestTypeListItem[] | undefined;
   RequestsStatusesContext: IRequestStatusListItem[] | null;
   RequestsAreaOptionsContext: IRequestAreaOptions[] | undefined;
-  CurrentUserContext: ICurrentUser | null;
+  CurrentUserContext: ICurrentUser | undefined;
   AllUsersContext: ICurrentUser[] | undefined;
   IsUserAManagerContext: Promise<boolean> | boolean;
   updateListItemTags: (id: number, tagStrings: string) => Promise<void>;

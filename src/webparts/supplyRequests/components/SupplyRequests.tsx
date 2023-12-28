@@ -39,7 +39,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     RequestsTypesContext: undefined,
     RequestsStatusesContext: null,
     RequestsAreaOptionsContext: undefined,
-    CurrentUserContext: null,
+    CurrentUserContext: undefined,
     AllUsersContext: undefined,
     IsUserAManagerContext: false,
     updateListItemTags: updateTags,
@@ -55,6 +55,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
           AllUsersContext: await services.getAllUsers(),
           RequestsAreaOptionsContext: await services.getAreaOptions(),
           RequestsTypesContext: await services.getTypesItems(),
+          CurrentUserContext: await services.getCurrentUser(),
         });
       } catch (error) {
         console.error(error);
@@ -117,10 +118,6 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
           showFormPanel={showFormPanel}
         />
         <RequestList list={requestsList} onSelect={selectItem} />
-        <div>
-          Is user a manager? -{" "}
-          {globalContext.IsUserAManagerContext ? "true" : "false"}
-        </div>
       </GlobalContext.Provider>
     </>
   );
