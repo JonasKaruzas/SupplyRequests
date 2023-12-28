@@ -11,7 +11,9 @@ import {
   defaultDatePickerStrings,
   IDropdownOption,
   IPersonaProps,
+  addDays,
 } from "@fluentui/react";
+import { useConst } from "@fluentui/react-hooks";
 
 import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
 import RequestFormRequestArea from "./RequestFormRequestArea";
@@ -61,6 +63,9 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
 
   const [formData, setFormData] = useState(initialFormDataState);
   const [tags, setTags] = useState("");
+
+  const today = useConst(new Date(Date.now()));
+  const minDate = useConst(addDays(today, 3));
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -200,6 +205,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
               }}
               isRequired
               strings={defaultDatePickerStrings}
+              minDate={minDate}
             />
           </>
         ) : (
