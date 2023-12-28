@@ -110,7 +110,7 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
     },
   ];
 
-  const list = (): IListItem[] => {
+  const userTypeFilteredList = (): IListItem[] => {
     if (IsUserAManager) {
       return props.list ?? [];
     } else {
@@ -120,6 +120,20 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
     }
   };
 
+  const filteredList = (): IListItem[] => {
+    const userFilteredList = userTypeFilteredList();
+
+    return userFilteredList.filter(
+      (item) =>
+        item.Title.toLocaleLowerCase().indexOf(
+          props.listFilters.Title.toLocaleLowerCase(),
+        ) !== -1 &&
+        item.Description.toLocaleLowerCase().indexOf(
+          props.listFilters.Description.toLocaleLowerCase(),
+        ) !== -1,
+    );
+  };
+
   return (
     <>
       <h3>Request List</h3>
@@ -127,7 +141,11 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
       {props.list === undefined ? (
         <p>No list items</p>
       ) : (
-        <DetailsList items={list()} columns={columns} selectionMode={0} />
+        <DetailsList
+          items={filteredList()}
+          columns={columns}
+          selectionMode={0}
+        />
       )}
     </>
   );

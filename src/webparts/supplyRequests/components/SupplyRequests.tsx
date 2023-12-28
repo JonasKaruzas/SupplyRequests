@@ -12,6 +12,7 @@ import FormPanel from "./FormPanel";
 import { IGlobalContext } from "./interfaces/IGlobalContext";
 
 import { IFormState } from "./interfaces/IFormState";
+import RequestFilter from "./RequestFilter";
 
 export const GlobalContext = createContext<IGlobalContext | undefined>(
   undefined,
@@ -25,8 +26,22 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
 
   const services = new Services(sp);
 
+  const defaultFilterState = {
+    Title: "",
+    Description: "",
+    // AssignedManagerId: null,
+    // RequestTypeId: null,
+    // RequestArea: null,
+    DueDateMin: undefined,
+    DueDateMax: undefined,
+    ExecutionDateMin: undefined,
+    ExecutionDateMax: undefined,
+    // Tags: "",
+  };
+
   const [requestsList, setRequestsList] = useState<IListItem[] | undefined>();
   const [formPanelVisible, setFormPanelVisible] = useState<boolean>(false);
+  const [listFilters, setListFilters] = useState(defaultFilterState);
 
   const updateTags = async (id: number, tagStrings: string): Promise<void> => {
     await services.updateTags(id, tagStrings);
@@ -106,9 +121,20 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     setRequestsList(await services.getListItems());
   };
 
+  const clearFilters = (): void => {
+    setListFilters(defaultFilterState);
+  };
+
+  console.log(listFilters);
+
   return (
     <>
       <GlobalContext.Provider value={globalContext}>
+        <RequestFilter
+          listFilters={listFilters}
+          setListFilters={setListFilters}
+          clearFilters={clearFilters}
+        />
         <FormPanel
           onAddItem={(formData: IFormState) => onAddItem(formData)}
           onDelete={(id: number) => onDeleteItem(id)}
@@ -117,7 +143,11 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
           hideFormPanel={hideFormPanel}
           showFormPanel={showFormPanel}
         />
-        <RequestList list={requestsList} onSelect={selectItem} />
+        <RequestList
+          list={requestsList}
+          onSelect={selectItem}
+          listFilters={listFilters}
+        />
       </GlobalContext.Provider>
     </>
   );
