@@ -165,7 +165,29 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
       return true;
     });
 
-    return filteredExecMax;
+    const filteredByManager = filteredExecMax.filter((item) => {
+      if (props.listFilters.AssignedManagerId === null) return true;
+      return item.AssignedManagerId === props.listFilters.AssignedManagerId;
+    });
+
+    const filteredByType = filteredByManager.filter((item) => {
+      if (props.listFilters.RequestTypeId === null) return true;
+      return item.RequestTypeId === props.listFilters.RequestTypeId;
+    });
+
+    const filteredByArea = filteredByType.filter((item) => {
+      if (props.listFilters.RequestArea === null) return true;
+      return item.RequestArea === props.listFilters.RequestArea;
+    });
+
+    const filteredByTags = filteredByArea.filter((item) => {
+      if (props.listTagFilter.length === 0) return true;
+      return props.listTagFilter.some((guid) =>
+        item.Tags.some((item) => item.TermGuid === guid),
+      );
+    });
+
+    return filteredByTags;
   };
 
   return (

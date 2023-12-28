@@ -29,19 +29,19 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
   const defaultFilterState = {
     Title: "",
     Description: "",
-    // AssignedManagerId: null,
-    // RequestTypeId: null,
-    // RequestArea: null,
+    AssignedManagerId: null,
+    RequestTypeId: null,
+    RequestArea: null,
     DueDateMin: undefined,
     DueDateMax: undefined,
     ExecutionDateMin: undefined,
     ExecutionDateMax: undefined,
-    // Tags: "",
   };
 
   const [requestsList, setRequestsList] = useState<IListItem[] | undefined>();
   const [formPanelVisible, setFormPanelVisible] = useState<boolean>(false);
   const [listFilters, setListFilters] = useState(defaultFilterState);
+  const [listTagFilter, setListTagFilter] = useState<string[]>([]);
 
   const updateTags = async (id: number, tagStrings: string): Promise<void> => {
     await services.updateTags(id, tagStrings);
@@ -134,6 +134,8 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
           listFilters={listFilters}
           setListFilters={setListFilters}
           clearFilters={clearFilters}
+          listTagFilter={listTagFilter}
+          setListTagFilter={setListTagFilter}
         />
         <FormPanel
           onAddItem={(formData: IFormState) => onAddItem(formData)}
@@ -147,6 +149,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
           list={requestsList}
           onSelect={selectItem}
           listFilters={listFilters}
+          listTagFilter={listTagFilter}
         />
       </GlobalContext.Provider>
     </>

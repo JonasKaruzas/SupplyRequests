@@ -1,4 +1,4 @@
 export interface IRequestAreaOptions {
-  key: string,
-  text: string,
+  key: string;
+  text: string;
 }

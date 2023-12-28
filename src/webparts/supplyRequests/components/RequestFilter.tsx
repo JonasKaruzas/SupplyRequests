@@ -1,11 +1,17 @@
 import {
   DatePicker,
+  IDropdownOption,
+  IPersonaProps,
   Label,
   TextField,
   defaultDatePickerStrings,
 } from "@fluentui/react";
 import * as React from "react";
 import { IRequestFilter } from "./interfaces/IRequestFilter";
+import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
+import RequestFormRequestType from "./RequestFormRequestType";
+import RequestFormRequestArea from "./RequestFormRequestArea";
+import RequestFormTagPicker from "./RequestFormTagPicker";
 // import "../../../../node_modules/office-ui-fabric-core/dist/css/fabric.css";
 
 const RequestFilter: React.FC<IRequestFilter> = (props: IRequestFilter) => {
@@ -19,6 +25,41 @@ const RequestFilter: React.FC<IRequestFilter> = (props: IRequestFilter) => {
 
     const formattedDate = new Date(date.setHours(date.getHours() + 2));
     props.setListFilters({ ...props.listFilters, [name]: formattedDate });
+  };
+
+  const onManagerChange = (persons: IPersonaProps[]): void => {
+    if (persons.length < 1) {
+      props.setListFilters({ ...props.listFilters, AssignedManagerId: null });
+    } else {
+      if (persons[0].id === undefined) return;
+      props.setListFilters({
+        ...props.listFilters,
+        AssignedManagerId: parseInt(persons[0].id, 10),
+      });
+    }
+  };
+
+  const onTypeChange = (item: IDropdownOption): void => {
+    if (typeof item.key === "string") return;
+
+    props.setListFilters({
+      ...props.listFilters,
+      RequestTypeId: item.key,
+    });
+  };
+
+  const onOptionChange = (
+    event: React.FormEvent<HTMLDivElement>,
+    item: IDropdownOption,
+  ): void => {
+    props.setListFilters({
+      ...props.listFilters,
+      RequestArea: item.text,
+    });
+  };
+
+  const onTagChange = (tagsIds: string[]): void => {
+    props.setListTagFilter(tagsIds);
   };
 
   return (
@@ -106,6 +147,19 @@ const RequestFilter: React.FC<IRequestFilter> = (props: IRequestFilter) => {
         }}
         strings={defaultDatePickerStrings}
       />
+      <RequestFormPeoplePicker
+        assignedManager={props.listFilters.AssignedManagerId}
+        onManagerChange={onManagerChange}
+      />
+      <RequestFormRequestType
+        selectedTypeId={props.listFilters.RequestTypeId}
+        onTypeChange={onTypeChange}
+      />
+      <RequestFormRequestArea
+        selectedOption={props.listFilters.RequestArea}
+        onOptionChange={onOptionChange}
+      />
+      <RequestFormTagPicker onTagsChange={onTagChange} />
     </>
   );
 };

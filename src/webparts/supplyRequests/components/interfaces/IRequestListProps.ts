@@ -5,4 +5,5 @@ export interface IRequestListProps {
   list: IListItem[] | undefined;
   onSelect: (id: number) => void;
   listFilters: IListFilters;
+  listTagFilter: string[];
 }
