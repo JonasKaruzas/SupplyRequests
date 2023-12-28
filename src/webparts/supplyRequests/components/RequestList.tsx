@@ -123,7 +123,7 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
   const filteredList = (): IListItem[] => {
     const userFilteredList = userTypeFilteredList();
 
-    return userFilteredList.filter(
+    const filteredText = userFilteredList.filter(
       (item) =>
         item.Title.toLocaleLowerCase().indexOf(
           props.listFilters.Title.toLocaleLowerCase(),
@@ -132,6 +132,40 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
           props.listFilters.Description.toLocaleLowerCase(),
         ) !== -1,
     );
+
+    const filteredDueMin = filteredText.filter((item) => {
+      if (props.listFilters.DueDateMin !== undefined) {
+        return new Date(item.DueDate) >= props.listFilters.DueDateMin;
+      }
+      return true;
+    });
+
+    const filteredDueMax = filteredDueMin.filter((item) => {
+      if (props.listFilters.DueDateMax !== undefined) {
+        return new Date(item.DueDate) <= props.listFilters.DueDateMax;
+      }
+      return true;
+    });
+
+    const filteredExecMin = filteredDueMax.filter((item) => {
+      if (props.listFilters.ExecutionDateMin !== undefined) {
+        return (
+          new Date(item.ExecutionDate) >= props.listFilters.ExecutionDateMin
+        );
+      }
+      return true;
+    });
+
+    const filteredExecMax = filteredExecMin.filter((item) => {
+      if (props.listFilters.ExecutionDateMax !== undefined) {
+        return (
+          new Date(item.ExecutionDate) <= props.listFilters.ExecutionDateMax
+        );
+      }
+      return true;
+    });
+
+    return filteredExecMax;
   };
 
   return (
