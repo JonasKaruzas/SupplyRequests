@@ -145,6 +145,27 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
     await props.onDelete(id);
   };
 
+  const isSubmitDisabled = (): boolean => {
+    console.log(formData);
+
+    if (!IsUserAManager) {
+      if (
+        formData.Title === "" ||
+        formData.Description === "" ||
+        formData.RequestTypeId === null ||
+        formData.DueDate === undefined
+      ) {
+        return true;
+      }
+    } else {
+      if (formData.AssignedManagerId === null) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   return (
     <>
       <form onSubmit={onSubmit}>
@@ -200,13 +221,14 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
         />
         <RequestFormTagPicker onTagsChange={onTagChange} />
 
-        <DefaultButton primary type="submit">
+        <DefaultButton primary type="submit" disabled={isSubmitDisabled()}>
           {selectedListItem ? "Update" : "Save"}
         </DefaultButton>
 
         {selectedListItem && IsUserAManager ? (
           <DefaultButton
             type="button"
+            disabled={isSubmitDisabled()}
             onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
               onSendToDeliveryDepartment(e)
             }
