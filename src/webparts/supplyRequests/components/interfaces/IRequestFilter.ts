@@ -16,5 +16,4 @@ export interface IRequestFilter {
   setListTagFilter: React.Dispatch<React.SetStateAction<string[]>>;
   listFilters: IListFilters;
   setListFilters: React.Dispatch<React.SetStateAction<IListFilters>>;
-  clearFilters: () => void;
 }

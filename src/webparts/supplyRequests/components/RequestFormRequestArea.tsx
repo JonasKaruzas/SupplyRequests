@@ -1,14 +1,8 @@
 import * as React from "react";
 import { useContext, useState } from "react";
-import {
-  Dropdown,
-  IDropdownOption,
-  IDropdownStyles,
-} from "@fluentui/react/lib/Dropdown";
+import { Dropdown, IDropdownOption } from "@fluentui/react/lib/Dropdown";
 import { IRequestFormRequestAreaProps } from "./interfaces/IRequestFormRequestAreaProps";
 import { GlobalContext } from "./SupplyRequests";
-
-const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
 
 const RequestFormRequestArea: React.FC<IRequestFormRequestAreaProps> = (
   props: IRequestFormRequestAreaProps,
@@ -42,7 +36,6 @@ const RequestFormRequestArea: React.FC<IRequestFormRequestAreaProps> = (
       onChange={onChange}
       placeholder="Select request area"
       options={areaOptions}
-      styles={dropdownStyles}
     />
   );
 };

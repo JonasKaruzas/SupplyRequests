@@ -12,7 +12,8 @@ import RequestFormPeoplePicker from "./RequestFormPeoplePicker";
 import RequestFormRequestType from "./RequestFormRequestType";
 import RequestFormRequestArea from "./RequestFormRequestArea";
 import RequestFormTagPicker from "./RequestFormTagPicker";
-// import "../../../../node_modules/office-ui-fabric-core/dist/css/fabric.css";
+import { Button } from "@fluentui/react-components";
+import { EraserRegular } from "@fluentui/react-icons";
 
 const RequestFilter: React.FC<IRequestFilter> = (props: IRequestFilter) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -64,102 +65,192 @@ const RequestFilter: React.FC<IRequestFilter> = (props: IRequestFilter) => {
 
   return (
     <>
-      <div>Filter Area</div>
-      <button onClick={props.clearFilters}>Clear filters</button>
-      {/* <div className="ms-Grid" dir="ltr">
+      <h4>Filter</h4>
+      <div className="ms-Grid" dir="ltr">
         <div className="ms-Grid-row">
-          <div className="ms-Grid-col ms-sm6 ms-md4 ms-lg2">A</div>
-          <div className="ms-Grid-col ms-sm6 ms-md8 ms-lg10">B</div>
+          <div className="ms-Grid-col ms-sm12 ms-md6 ms-lg4">
+            <Label htmlFor="filterTitleFieldId">Title:</Label>
+            <TextField
+              id="filterTitleFieldId"
+              name="Title"
+              placeholder="Search"
+              value={props.listFilters.Title}
+              onChange={onChange}
+            />
+          </div>
+          <div className="ms-Grid-col ms-sm12 ms-md6 ms-lg4">
+            <Label htmlFor="filterDescriptionFieldId">Description:</Label>
+            <TextField
+              id="filterDescriptionFieldId"
+              name="Description"
+              placeholder="Search"
+              value={props.listFilters.Description}
+              onChange={onChange}
+            />
+          </div>
+          <div className="ms-Grid-col ms-sm12 ms-md6 ms-lg4">
+            <div className="ms-Grid-row ">
+              <div className="ms-Grid-col">
+                <Label>Due date</Label>
+              </div>
+            </div>
+            <div className="ms-Grid-row">
+              <div className="ms-Grid-col ms-sm10">
+                <DatePicker
+                  placeholder="from"
+                  value={props.listFilters.DueDateMin}
+                  onSelectDate={(e) => {
+                    if (e === null) {
+                      onDateChange(undefined, "DueDateMin");
+                    } else {
+                      onDateChange(e, "DueDateMin");
+                    }
+                  }}
+                  strings={defaultDatePickerStrings}
+                />
+              </div>
+              <div className="ms-Grid-col ms-sm2 ">
+                <Button
+                  shape="circular"
+                  onClick={() =>
+                    props.setListFilters({
+                      ...props.listFilters,
+                      DueDateMin: undefined,
+                    })
+                  }
+                  icon={<EraserRegular />}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="ms-Grid-col ms-sm12 ms-md6 ms-lg4">
+            <div className="ms-Grid-row ">
+              <div className="ms-Grid-col">
+                <Label>Due date</Label>
+              </div>
+            </div>
+            <div className="ms-Grid-row">
+              <div className="ms-Grid-col ms-sm10">
+                <DatePicker
+                  placeholder="to"
+                  value={props.listFilters.DueDateMax}
+                  onSelectDate={(e) => {
+                    if (e === null) {
+                      onDateChange(undefined, "DueDateMax");
+                    } else {
+                      onDateChange(e, "DueDateMax");
+                    }
+                  }}
+                  strings={defaultDatePickerStrings}
+                />
+              </div>
+              <div className="ms-Grid-col ms-sm2 ">
+                <Button
+                  shape="circular"
+                  onClick={() =>
+                    props.setListFilters({
+                      ...props.listFilters,
+                      DueDateMax: undefined,
+                    })
+                  }
+                  icon={<EraserRegular />}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="ms-Grid-col ms-sm12 ms-md6 ms-lg4">
+            <div className="ms-Grid-row ">
+              <div className="ms-Grid-col">
+                <Label>Execution date</Label>
+              </div>
+            </div>
+            <div className="ms-Grid-row">
+              <div className="ms-Grid-col ms-sm10">
+                <DatePicker
+                  placeholder="from"
+                  value={props.listFilters.ExecutionDateMin}
+                  onSelectDate={(e) => {
+                    if (e === null) {
+                      onDateChange(undefined, "ExecutionDateMin");
+                    } else {
+                      onDateChange(e, "ExecutionDateMin");
+                    }
+                  }}
+                  strings={defaultDatePickerStrings}
+                />
+              </div>
+              <div className="ms-Grid-col ms-sm2 ">
+                <Button
+                  shape="circular"
+                  onClick={() =>
+                    props.setListFilters({
+                      ...props.listFilters,
+                      ExecutionDateMin: undefined,
+                    })
+                  }
+                  icon={<EraserRegular />}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="ms-Grid-col ms-sm12 ms-md6 ms-lg4">
+            <div className="ms-Grid-row ">
+              <div className="ms-Grid-col">
+                <Label>Execution date</Label>
+              </div>
+            </div>
+            <div className="ms-Grid-row">
+              <div className="ms-Grid-col ms-sm10">
+                <DatePicker
+                  placeholder="from"
+                  value={props.listFilters.ExecutionDateMax}
+                  onSelectDate={(e) => {
+                    if (e === null) {
+                      onDateChange(undefined, "ExecutionDateMax");
+                    } else {
+                      onDateChange(e, "ExecutionDateMax");
+                    }
+                  }}
+                  strings={defaultDatePickerStrings}
+                />
+              </div>
+              <div className="ms-Grid-col ms-sm2 ">
+                <Button
+                  shape="circular"
+                  onClick={() =>
+                    props.setListFilters({
+                      ...props.listFilters,
+                      ExecutionDateMax: undefined,
+                    })
+                  }
+                  icon={<EraserRegular />}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="ms-Grid-col ms-sm12 ms-md6 ms-lg4">
+            <RequestFormPeoplePicker
+              assignedManager={props.listFilters.AssignedManagerId}
+              onManagerChange={onManagerChange}
+            />
+          </div>
+          <div className="ms-Grid-col ms-sm12 ms-md6 ms-lg4">
+            <RequestFormRequestType
+              selectedTypeId={props.listFilters.RequestTypeId}
+              onTypeChange={onTypeChange}
+            />
+          </div>
+          <div className="ms-Grid-col ms-sm12 ms-md6 ms-lg4">
+            <RequestFormRequestArea
+              selectedOption={props.listFilters.RequestArea}
+              onOptionChange={onOptionChange}
+            />
+          </div>
+          <div className="ms-Grid-col ms-sm12 ms-md6 ms-lg4">
+            <RequestFormTagPicker onTagsChange={onTagChange} />
+          </div>
         </div>
       </div>
-      <div className="ms-Grid-col ms-sm12 ms-hiddenXxlUp">
-        Visible on smaller screens
-      </div>
-      <div className="ms-Grid-col ms-sm12 ms-hiddenXlDown">
-        Visible on larger screens
-      </div> */}
-
-      <Label htmlFor="filterTitleFieldId">Title:</Label>
-      <TextField
-        id="filterTitleFieldId"
-        name="Title"
-        placeholder="Search"
-        value={props.listFilters.Title}
-        onChange={onChange}
-      />
-      <Label htmlFor="filterDescriptionFieldId">Description:</Label>
-      <TextField
-        id="filterDescriptionFieldId"
-        name="Description"
-        placeholder="Search"
-        value={props.listFilters.Description}
-        onChange={onChange}
-      />
-      <DatePicker
-        placeholder="from"
-        label="Due Date from"
-        value={props.listFilters.DueDateMin}
-        onSelectDate={(e) => {
-          if (e === null) {
-            onDateChange(undefined, "DueDateMin");
-          } else {
-            onDateChange(e, "DueDateMin");
-          }
-        }}
-        strings={defaultDatePickerStrings}
-      />
-      <DatePicker
-        placeholder="to"
-        label="Due Date to"
-        value={props.listFilters.DueDateMax}
-        onSelectDate={(e) => {
-          if (e === null) {
-            onDateChange(undefined, "DueDateMax");
-          } else {
-            onDateChange(e, "DueDateMax");
-          }
-        }}
-        strings={defaultDatePickerStrings}
-      />
-      <DatePicker
-        placeholder="from"
-        label="Execution Date from"
-        value={props.listFilters.ExecutionDateMin}
-        onSelectDate={(e) => {
-          if (e === null) {
-            onDateChange(undefined, "ExecutionDateMin");
-          } else {
-            onDateChange(e, "ExecutionDateMin");
-          }
-        }}
-        strings={defaultDatePickerStrings}
-      />
-      <DatePicker
-        placeholder="to"
-        label="Execution Date to"
-        value={props.listFilters.ExecutionDateMax}
-        onSelectDate={(e) => {
-          if (e === null) {
-            onDateChange(undefined, "ExecutionDateMax");
-          } else {
-            onDateChange(e, "ExecutionDateMax");
-          }
-        }}
-        strings={defaultDatePickerStrings}
-      />
-      <RequestFormPeoplePicker
-        assignedManager={props.listFilters.AssignedManagerId}
-        onManagerChange={onManagerChange}
-      />
-      <RequestFormRequestType
-        selectedTypeId={props.listFilters.RequestTypeId}
-        onTypeChange={onTypeChange}
-      />
-      <RequestFormRequestArea
-        selectedOption={props.listFilters.RequestArea}
-        onOptionChange={onOptionChange}
-      />
-      <RequestFormTagPicker onTagsChange={onTagChange} />
     </>
   );
 };

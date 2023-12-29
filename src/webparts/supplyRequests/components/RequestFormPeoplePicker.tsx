@@ -37,7 +37,6 @@ const RequestFormPeoplePicker: React.FC<IRequestFormPeoplePickerProps> = (
       ensureUser={true}
       principalTypes={[PrincipalType.User]}
       resolveDelay={500}
-      required
       defaultSelectedUsers={[findUserName(props.assignedManager)]}
     />
   ) : null;

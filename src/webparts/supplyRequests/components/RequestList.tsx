@@ -16,6 +16,48 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
 
   const tagLabelStyle = {
     marginRight: "8px",
+    color: "darkblue",
+    fontWeight: "700",
+  };
+
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  const statusStyle = (id: number) => {
+    switch (id) {
+      case 1:
+        return {
+          backgroundColor: "#E1E1E1",
+          padding: "4px 8px",
+          width: "fit-content",
+          fontWeight: "700",
+          borderRadius: "4px",
+        };
+      case 2:
+        return {
+          backgroundColor: "#FFFDCD",
+          padding: "4px 8px",
+          width: "fit-content",
+          fontWeight: "700",
+          borderRadius: "4px",
+        };
+      case 3:
+        return {
+          backgroundColor: "#D1FFCD",
+          padding: "4px 8px",
+          width: "fit-content",
+          fontWeight: "700",
+          borderRadius: "4px",
+        };
+      case 4:
+        return {
+          backgroundColor: "#FFCDCD",
+          padding: "4px 8px",
+          width: "fit-content",
+          fontWeight: "700",
+          borderRadius: "4px",
+        };
+      default:
+        return {};
+    }
   };
 
   const columns = [
@@ -37,8 +79,11 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
     {
       key: "columnB",
       name: "Status",
-      minWidth: 50,
+      minWidth: 100,
       fieldName: "StatusText",
+      onRender: (item: IListItem, index: number, column: IColumn) => {
+        return <div style={statusStyle(item.StatusId)}>{item.StatusText}</div>;
+      },
     },
     { key: "column1", name: "Title", minWidth: 150, fieldName: "Title" },
     {
@@ -74,7 +119,7 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
     {
       key: "column4",
       name: "Request Type",
-      minWidth: 150,
+      minWidth: 100,
       fieldName: "RequestTypeText",
     },
     {
@@ -171,12 +216,20 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
     });
 
     const filteredByType = filteredByManager.filter((item) => {
-      if (props.listFilters.RequestTypeId === null) return true;
+      if (
+        props.listFilters.RequestTypeId === null ||
+        props.listFilters.RequestTypeId === 0
+      )
+        return true;
       return item.RequestTypeId === props.listFilters.RequestTypeId;
     });
 
     const filteredByArea = filteredByType.filter((item) => {
-      if (props.listFilters.RequestArea === null) return true;
+      if (
+        props.listFilters.RequestArea === null ||
+        props.listFilters.RequestArea === ""
+      )
+        return true;
       return item.RequestArea === props.listFilters.RequestArea;
     });
 

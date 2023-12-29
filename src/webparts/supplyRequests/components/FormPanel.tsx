@@ -44,7 +44,12 @@ const FormPanel: React.FC<IFormPanel> = (props: IFormPanel) => {
   return (
     <div>
       {isUserAManager ? null : (
-        <DefaultButton primary text="Add request" onClick={openPanel} />
+        <DefaultButton
+          primary
+          text="Add request"
+          onClick={openPanel}
+          style={{ marginTop: "16px" }}
+        />
       )}
       <Panel
         headerText="Request info"
@@ -56,6 +61,7 @@ const FormPanel: React.FC<IFormPanel> = (props: IFormPanel) => {
           onAddItem={onSave}
           onDelete={onDelete}
           onUpdateItem={onUpdate}
+          onCancel={closePanel}
         />
       </Panel>
     </div>

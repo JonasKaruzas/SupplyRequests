@@ -227,30 +227,74 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
         />
         <RequestFormTagPicker onTagsChange={onTagChange} />
 
-        <DefaultButton primary type="submit" disabled={isSubmitDisabled()}>
-          {selectedListItem ? "Update" : "Save"}
-        </DefaultButton>
-
-        {selectedListItem && IsUserAManager ? (
-          <DefaultButton
-            type="button"
-            disabled={isSubmitDisabled()}
-            onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
-              onSendToDeliveryDepartment(e)
-            }
+        <div className="ms-Grid" dir="ltr">
+          <div
+            className="ms-Grid-row"
+            style={{ marginTop: "8px", width: "100%" }}
           >
-            Update and Send
-          </DefaultButton>
-        ) : null}
-
-        {selectedListItem ? (
-          <DefaultButton
-            type="button"
-            onClick={() => onDelete(selectedListItem.Id)}
+            <div className="ms-Grid-col ms-sm4">
+              <DefaultButton
+                primary
+                type="submit"
+                disabled={isSubmitDisabled()}
+                style={{ padding: "0" }}
+              >
+                {selectedListItem ? "Update" : "Save"}
+              </DefaultButton>
+            </div>
+            <div className="ms-Grid-col ms-sm4">
+              {selectedListItem && IsUserAManager ? (
+                <DefaultButton
+                  type="button"
+                  disabled={isSubmitDisabled()}
+                  onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
+                    onSendToDeliveryDepartment(e)
+                  }
+                  styles={{
+                    root: {
+                      backgroundColor: "#0078D4",
+                      color: "lightgrey",
+                      padding: "0",
+                    },
+                  }}
+                >
+                  Send
+                </DefaultButton>
+              ) : null}
+            </div>
+            <div className="ms-Grid-col ms-sm4">
+              <DefaultButton
+                type="button"
+                onClick={props.onCancel}
+                style={{ padding: "0" }}
+              >
+                Cancel
+              </DefaultButton>
+            </div>
+          </div>
+          <div
+            className="ms-Grid-row"
+            style={{ marginTop: "8px", width: "100%" }}
           >
-            Delete
-          </DefaultButton>
-        ) : null}
+            <div className="ms-Grid-col ms-sm12" style={{ width: "100%" }}>
+              {selectedListItem ? (
+                <DefaultButton
+                  type="button"
+                  onClick={() => onDelete(selectedListItem.Id)}
+                  styles={{
+                    root: {
+                      backgroundColor: "#E81123",
+                      color: "white",
+                      width: "100%",
+                    },
+                  }}
+                >
+                  Delete
+                </DefaultButton>
+              ) : null}
+            </div>
+          </div>
+        </div>
       </form>
     </>
   );

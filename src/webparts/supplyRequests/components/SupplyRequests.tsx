@@ -14,6 +14,8 @@ import { IGlobalContext } from "./interfaces/IGlobalContext";
 import { IFormState } from "./interfaces/IFormState";
 import RequestFilter from "./RequestFilter";
 
+import "../../../../node_modules/office-ui-fabric-core/dist/css/fabric.css";
+
 export const GlobalContext = createContext<IGlobalContext | undefined>(
   undefined,
 );
@@ -30,7 +32,7 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     Title: "",
     Description: "",
     AssignedManagerId: null,
-    RequestTypeId: null,
+    RequestTypeId: 0,
     RequestArea: null,
     DueDateMin: undefined,
     DueDateMax: undefined,
@@ -121,19 +123,12 @@ const SupplyRequests: React.FC<ISupplyRequestsProps> = (
     setRequestsList(await services.getListItems());
   };
 
-  const clearFilters = (): void => {
-    setListFilters(defaultFilterState);
-  };
-
-  console.log(listFilters);
-
   return (
     <>
       <GlobalContext.Provider value={globalContext}>
         <RequestFilter
           listFilters={listFilters}
           setListFilters={setListFilters}
-          clearFilters={clearFilters}
           listTagFilter={listTagFilter}
           setListTagFilter={setListTagFilter}
         />

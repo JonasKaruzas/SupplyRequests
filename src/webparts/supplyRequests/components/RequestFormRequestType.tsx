@@ -1,14 +1,8 @@
 import * as React from "react";
 import { useContext, useState } from "react";
-import {
-  Dropdown,
-  IDropdownOption,
-  IDropdownStyles,
-} from "@fluentui/react/lib/Dropdown";
+import { Dropdown, IDropdownOption } from "@fluentui/react/lib/Dropdown";
 import { IRequestFormRequestTypeProps } from "./interfaces/IRequestFormRequestTypeProps";
 import { GlobalContext } from "./SupplyRequests";
-
-const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
 
 const RequestFormRequestType: React.FC<IRequestFormRequestTypeProps> = (
   props: IRequestFormRequestTypeProps,
@@ -21,6 +15,29 @@ const RequestFormRequestType: React.FC<IRequestFormRequestTypeProps> = (
     key: option.Id,
     text: option.Title,
   }));
+
+  mappedTypeOptions.unshift({
+    key: 0,
+    text: "",
+    "odata.type": "",
+    "odata.id": "",
+    "odata.etag": "",
+    "odata.editLink": "",
+    FileSystemObjectType: 0,
+    Id: 0,
+    ServerRedirectedEmbedUrl: "",
+    ContentTypeId: "",
+    Title: "",
+    DisplayOrder: 0,
+    ID: 0,
+    Modified: "",
+    Created: "",
+    AuthorId: 0,
+    EditorId: 0,
+    OData__UIVersionString: "",
+    Attachments: false,
+    GUID: "",
+  });
 
   const selectedItemOption = props.selectedTypeId
     ? {
@@ -51,8 +68,6 @@ const RequestFormRequestType: React.FC<IRequestFormRequestTypeProps> = (
       onChange={onChange}
       placeholder="Select request type"
       options={mappedTypeOptions}
-      styles={dropdownStyles}
-      required
     />
   );
 };
