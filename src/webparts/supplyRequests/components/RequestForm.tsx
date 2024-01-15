@@ -4,7 +4,10 @@ import { useState, useContext } from "react";
 import { Label } from "@fluentui/react/lib/Label";
 import { TextField } from "@fluentui/react/lib/TextField";
 import { IRequestForm } from "./interfaces/IRequestForm";
+
+import { Dialog, DialogType, DialogFooter } from "@fluentui/react/lib/Dialog";
 import { DefaultButton } from "@fluentui/react/lib/Button";
+import { useBoolean } from "@fluentui/react-hooks";
 
 import {
   DatePicker,
@@ -30,6 +33,13 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   const currentUser = globalContext?.CurrentUserContext;
   const selectedListItem = globalContext?.SelectedListItemContext;
   const IsUserAManager = globalContext?.IsUserAManagerContext;
+
+  const [hideDialog, { toggle: toggleHideDialog }] = useBoolean(true);
+  const dialogContentProps = {
+    type: DialogType.normal,
+    title: "Delete request",
+    subText: "Do you really want to delete this request?",
+  };
 
   const defaultFormState = {
     Id: undefined,
@@ -276,21 +286,46 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
             className="ms-Grid-row"
             style={{ marginTop: "8px", width: "100%" }}
           >
-            <div className="ms-Grid-col ms-sm12" style={{ width: "100%" }}>
+            <div
+              className="ms-Grid-col ms-sm12"
+              style={{ width: "100%", paddingTop: "15px" }}
+            >
               {selectedListItem ? (
-                <DefaultButton
-                  type="button"
-                  onClick={() => onDelete(selectedListItem.Id)}
-                  styles={{
-                    root: {
-                      backgroundColor: "#E81123",
-                      color: "white",
-                      width: "100%",
-                    },
-                  }}
-                >
-                  Delete
-                </DefaultButton>
+                <>
+                  <DefaultButton
+                    type="button"
+                    onClick={toggleHideDialog}
+                    styles={{
+                      root: {
+                        backgroundColor: "#E81123",
+                        color: "white",
+                        width: "100%",
+                      },
+                    }}
+                  >
+                    Delete
+                  </DefaultButton>
+                  <Dialog
+                    hidden={hideDialog}
+                    onDismiss={toggleHideDialog}
+                    dialogContentProps={dialogContentProps}
+                  >
+                    <DialogFooter>
+                      <DefaultButton
+                        onClick={() => onDelete(selectedListItem.Id)}
+                        text="Delete"
+                        styles={{
+                          root: {
+                            backgroundColor: "#E81123",
+                            color: "white",
+                            width: "100%",
+                          },
+                        }}
+                      />
+                      <DefaultButton onClick={toggleHideDialog} text="Cancel" />
+                    </DialogFooter>
+                  </Dialog>
+                </>
               ) : null}
             </div>
           </div>

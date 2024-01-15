@@ -8,6 +8,7 @@ import { EditRegular } from "@fluentui/react-icons";
 import { StatusType } from "./enums/StatusType";
 import { IRequestListProps } from "./interfaces/IRequestListProps";
 import { GlobalContext } from "./SupplyRequests";
+import { ArrowCounterclockwiseRegular } from "@fluentui/react-icons";
 
 const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
   const globalContext = useContext(GlobalContext);
@@ -41,7 +42,7 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
         };
       case 3:
         return {
-          backgroundColor: "#D1FFCD",
+          backgroundColor: "#FFCDCD",
           padding: "4px 8px",
           width: "fit-content",
           fontWeight: "700",
@@ -49,7 +50,7 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
         };
       case 4:
         return {
-          backgroundColor: "#FFCDCD",
+          backgroundColor: "#D1FFCD",
           padding: "4px 8px",
           width: "fit-content",
           fontWeight: "700",
@@ -245,7 +246,23 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
 
   return (
     <>
-      <h3>Request List</h3>
+      <div className="ms-Grid" dir="ltr">
+        <div
+          className="ms-Grid-row"
+          style={{ display: "flex", alignItems: "center" }}
+        >
+          <div className="ms-Grid-col ms-sm11">
+            <h3>Request List</h3>
+          </div>
+          <div className="ms-Grid-col ms-sm1">
+            <Button
+              shape="circular"
+              onClick={() => console.log("refresh")}
+              icon={<ArrowCounterclockwiseRegular />}
+            />
+          </div>
+        </div>
+      </div>
 
       {props.list === undefined ? (
         <p>No list items</p>
