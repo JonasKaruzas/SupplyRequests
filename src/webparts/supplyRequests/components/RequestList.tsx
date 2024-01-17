@@ -8,7 +8,6 @@ import { EditRegular } from "@fluentui/react-icons";
 import { StatusType } from "./enums/StatusType";
 import { IRequestListProps } from "./interfaces/IRequestListProps";
 import { GlobalContext } from "./SupplyRequests";
-import { ArrowCounterclockwiseRegular } from "@fluentui/react-icons";
 
 const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
   const globalContext = useContext(GlobalContext);
@@ -247,19 +246,9 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
   return (
     <>
       <div className="ms-Grid" dir="ltr">
-        <div
-          className="ms-Grid-row"
-          style={{ display: "flex", alignItems: "center" }}
-        >
-          <div className="ms-Grid-col ms-sm11">
+        <div className="ms-Grid-row">
+          <div className="ms-Grid-col">
             <h3>Request List</h3>
-          </div>
-          <div className="ms-Grid-col ms-sm1">
-            <Button
-              shape="circular"
-              onClick={() => console.log("refresh")}
-              icon={<ArrowCounterclockwiseRegular />}
-            />
           </div>
         </div>
       </div>

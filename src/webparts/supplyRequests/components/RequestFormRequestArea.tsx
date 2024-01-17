@@ -30,13 +30,30 @@ const RequestFormRequestArea: React.FC<IRequestFormRequestAreaProps> = (
   };
 
   return (
-    <Dropdown
-      label="Request Area"
-      selectedKey={selectedItem ? selectedItem.key : undefined}
-      onChange={onChange}
-      placeholder="Select request area"
-      options={areaOptions}
-    />
+    <div style={{ display: "flex", position: "relative" }}>
+      <div style={{ width: "100%" }}>
+        <Dropdown
+          label="Request Area"
+          selectedKey={selectedItem ? selectedItem.key : undefined}
+          onChange={onChange}
+          placeholder="Select request area"
+          options={areaOptions}
+          style={{ width: "100%" }}
+        />
+      </div>
+      {props.required && (
+        <div
+          style={{
+            color: "rgb(164, 38, 44)",
+            position: "relative",
+            top: "25px",
+            right: "-3px",
+          }}
+        >
+          *
+        </div>
+      )}
+    </div>
   );
 };
 

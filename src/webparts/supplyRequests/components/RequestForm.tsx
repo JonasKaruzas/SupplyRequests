@@ -34,6 +34,14 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   const selectedListItem = globalContext?.SelectedListItemContext;
   const IsUserAManager = globalContext?.IsUserAManagerContext;
 
+  const IsUserAManagerResult = (): boolean => {
+    if (IsUserAManager === true) {
+      return true;
+    }
+
+    return false;
+  };
+
   const [hideDialog, { toggle: toggleHideDialog }] = useBoolean(true);
   const dialogContentProps = {
     type: DialogType.normal,
@@ -168,6 +176,7 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
         formData.Title === "" ||
         formData.Description === "" ||
         formData.RequestTypeId === null ||
+        formData.RequestArea === null ||
         formData.DueDate === undefined
       ) {
         return true;
@@ -184,65 +193,62 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   return (
     <>
       <form onSubmit={onSubmit}>
-        {!IsUserAManager ? (
-          <>
-            <Label htmlFor="titleFieldId">Title:</Label>
-            <TextField
-              id="titleFieldId"
-              name="Title"
-              value={formData.Title}
-              onChange={onChange}
-              required
-            />
-            <Label htmlFor="descriptionFieldId">Description:</Label>
-            <TextField
-              id="descriptionFieldId"
-              name="Description"
-              value={formData.Description}
-              onChange={onChange}
-              required
-            />
-            <DatePicker
-              placeholder="Select a DueDate"
-              label="DueDate"
-              value={formData.DueDate}
-              onSelectDate={(e) => {
-                if (e === null) {
-                  onDateChange(undefined);
-                } else {
-                  onDateChange(e);
-                }
-              }}
-              isRequired
-              strings={defaultDatePickerStrings}
-              minDate={minDate}
-            />
-          </>
-        ) : (
-          <>
-            <RequestFormPeoplePicker
-              assignedManager={formData.AssignedManagerId}
-              onManagerChange={onManagerChange}
-            />
-          </>
-        )}
+        <Label htmlFor="titleFieldId">Title:</Label>
+        <TextField
+          id="titleFieldId"
+          name="Title"
+          value={formData.Title}
+          onChange={onChange}
+          required
+          disabled={IsUserAManagerResult()}
+        />
+        <Label htmlFor="descriptionFieldId">Description:</Label>
+        <TextField
+          id="descriptionFieldId"
+          name="Description"
+          value={formData.Description}
+          onChange={onChange}
+          required
+          disabled={IsUserAManagerResult()}
+        />
+        <DatePicker
+          placeholder="Select a DueDate"
+          label="DueDate"
+          value={formData.DueDate}
+          onSelectDate={(e) => {
+            if (e === null) {
+              onDateChange(undefined);
+            } else {
+              onDateChange(e);
+            }
+          }}
+          isRequired
+          strings={defaultDatePickerStrings}
+          minDate={minDate}
+          disabled={IsUserAManagerResult()}
+        />
+
+        <RequestFormPeoplePicker
+          assignedManager={formData.AssignedManagerId}
+          onManagerChange={onManagerChange}
+          disabled={!IsUserAManagerResult()}
+        />
 
         <RequestFormRequestType
           selectedTypeId={formData.RequestTypeId}
           onTypeChange={onTypeChange}
+          required
         />
         <RequestFormRequestArea
           selectedOption={formData.RequestArea}
           onOptionChange={onOptionChange}
+          required
         />
         <RequestFormTagPicker onTagsChange={onTagChange} />
 
         <div className="ms-Grid" dir="ltr">
-          <div
-            className="ms-Grid-row"
-            style={{ marginTop: "8px", width: "100%" }}
-          >
-            <div className="ms-Grid-col ms-sm4">
+          <div className="ms-Grid-row" style={{ marginTop: "8px" }}>
+            <div className="ms-Grid-col ms-sm6">
               <DefaultButton
                 primary
                 type="submit"
@@ -252,7 +258,20 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
                 {selectedListItem ? "Update" : "Save"}
               </DefaultButton>
             </div>
-            <div className="ms-Grid-col ms-sm4">
+
+            <div className="ms-Grid-col ms-sm6">
+              <DefaultButton
+                type="button"
+                onClick={props.onCancel}
+                style={{ padding: "0", float: "right" }}
+              >
+                Cancel
+              </DefaultButton>
+            </div>
+          </div>
+
+          <div className="ms-Grid-row" style={{ marginTop: "8px" }}>
+            <div className="ms-Grid-col ms-sm12">
               {selectedListItem && IsUserAManager ? (
                 <DefaultButton
                   type="button"
@@ -263,29 +282,18 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
                   styles={{
                     root: {
                       backgroundColor: "#0078D4",
-                      color: "lightgrey",
+                      color: "white",
                       padding: "0",
+                      width: "100%",
                     },
                   }}
                 >
-                  Send
+                  Update & Send
                 </DefaultButton>
               ) : null}
             </div>
-            <div className="ms-Grid-col ms-sm4">
-              <DefaultButton
-                type="button"
-                onClick={props.onCancel}
-                style={{ padding: "0" }}
-              >
-                Cancel
-              </DefaultButton>
-            </div>
           </div>
-          <div
-            className="ms-Grid-row"
-            style={{ marginTop: "8px", width: "100%" }}
-          >
+          <div className="ms-Grid-row" style={{ marginTop: "8px" }}>
             <div
               className="ms-Grid-col ms-sm12"
               style={{ width: "100%", paddingTop: "15px" }}

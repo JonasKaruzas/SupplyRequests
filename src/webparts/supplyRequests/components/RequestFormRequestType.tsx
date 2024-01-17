@@ -62,13 +62,29 @@ const RequestFormRequestType: React.FC<IRequestFormRequestTypeProps> = (
   };
 
   return (
-    <Dropdown
-      label="Request Type"
-      selectedKey={selectedItem ? selectedItem.key : undefined}
-      onChange={onChange}
-      placeholder="Select request type"
-      options={mappedTypeOptions}
-    />
+    <div style={{ display: "flex", position: "relative" }}>
+      <div style={{ width: "100%" }}>
+        <Dropdown
+          label="Request Type"
+          selectedKey={selectedItem ? selectedItem.key : undefined}
+          onChange={onChange}
+          placeholder="Select request type"
+          options={mappedTypeOptions}
+        />
+      </div>
+      {props.required && (
+        <div
+          style={{
+            color: "rgb(164, 38, 44)",
+            position: "relative",
+            top: "25px",
+            right: "-3px",
+          }}
+        >
+          *
+        </div>
+      )}
+    </div>
   );
 };
 
