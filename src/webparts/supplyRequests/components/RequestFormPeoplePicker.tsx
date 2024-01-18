@@ -31,7 +31,6 @@ const RequestFormPeoplePicker: React.FC<IRequestFormPeoplePickerProps> = (
       context={spContext}
       titleText="Assigned Manager"
       personSelectionLimit={1}
-      // groupName={"SupplyDepartment Managers"}
       showtooltip={true}
       onChange={onPeoplePickerChange}
       ensureUser={true}

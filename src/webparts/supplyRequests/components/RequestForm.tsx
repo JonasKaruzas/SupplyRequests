@@ -169,8 +169,6 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
   };
 
   const isSubmitDisabled = (): boolean => {
-    console.log(formData);
-
     if (!IsUserAManager) {
       if (
         formData.Title === "" ||
