@@ -182,7 +182,11 @@ const RequestForm: React.FC<IRequestForm> = (props: IRequestForm) => {
         return true;
       }
     } else {
-      if (formData.AssignedManagerId === null) {
+      if (
+        formData.AssignedManagerId === null ||
+        formData.RequestTypeId === 0 ||
+        formData.RequestArea === ""
+      ) {
         return true;
       }
     }
