@@ -9,10 +9,23 @@ import { StatusType } from "./enums/StatusType";
 import { IRequestListProps } from "./interfaces/IRequestListProps";
 import { GlobalContext } from "./SupplyRequests";
 
+import {
+  TooltipHost,
+  TooltipDelay,
+  DirectionalHint,
+  ITooltipHostStyles,
+} from "@fluentui/react";
+import { useId } from "@fluentui/react-hooks";
+
 const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
   const globalContext = useContext(GlobalContext);
   const currentUserId = globalContext?.CurrentUserContext?.Id;
   const IsUserAManager = globalContext?.IsUserAManagerContext;
+
+  const tooltipId = useId("tooltip");
+  const hostStyles: Partial<ITooltipHostStyles> = {
+    root: { display: "inline-block" },
+  };
 
   const tagLabelStyle = {
     marginRight: "8px",
@@ -85,12 +98,45 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
         return <div style={statusStyle(item.StatusId)}>{item.StatusText}</div>;
       },
     },
-    { key: "column1", name: "Title", minWidth: 150, fieldName: "Title" },
+    {
+      key: "column1",
+      name: "Title",
+      minWidth: 150,
+      fieldName: "Title",
+      onRender: (item: IListItem, index: number, column: IColumn) => {
+        return (
+          <TooltipHost
+            tooltipProps={{ onRenderContent: () => <div>{item.Title}</div> }}
+            delay={TooltipDelay.zero}
+            id={tooltipId}
+            directionalHint={DirectionalHint.bottomCenter}
+            styles={hostStyles}
+          >
+            <div>{item.Title}</div>
+          </TooltipHost>
+        );
+      },
+    },
     {
       key: "column2",
       name: "Description",
       minWidth: 100,
       fieldName: "Description",
+      onRender: (item: IListItem, index: number, column: IColumn) => {
+        return (
+          <TooltipHost
+            tooltipProps={{
+              onRenderContent: () => <div>{item.Description}</div>,
+            }}
+            delay={TooltipDelay.zero}
+            id={tooltipId}
+            directionalHint={DirectionalHint.bottomCenter}
+            styles={hostStyles}
+          >
+            <div>{item.Description}</div>
+          </TooltipHost>
+        );
+      },
     },
     {
       key: "column2B",
