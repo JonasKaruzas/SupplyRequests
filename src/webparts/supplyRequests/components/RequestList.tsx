@@ -113,7 +113,12 @@ const RequestList: React.FC<IRequestListProps> = (props: IRequestListProps) => {
       minWidth: 100,
       fieldName: "ExecutionDate",
       onRender: (item: IListItem) => {
-        return new Date(item.ExecutionDate).toISOString().split("T")[0];
+        const date = new Date(item.ExecutionDate).toISOString().split("T")[0];
+        if (date === "1970-01-01") {
+          return "";
+        } else {
+          return date;
+        }
       },
     },
     {
