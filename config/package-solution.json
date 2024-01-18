@@ -3,7 +3,7 @@
   "solution": {
     "name": "Supply Requests Webpart",
     "id": "ac5aa850-9c25-4d15-9972-69a89024a370",
-    "version": "1.0.0.0",
+    "version": "1.0.0.1",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
@@ -30,7 +30,7 @@
         "title": "supply-requests Feature",
         "description": "The feature that activates elements of the supply-requests solution.",
         "id": "4420349d-0e12-4f49-98fe-e3325bb43f50",
-        "version": "1.0.0.0"
+        "version": "1.0.0.1"
       }
     ]
   },
